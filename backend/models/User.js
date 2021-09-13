@@ -17,20 +17,15 @@ const User = db.define('User', {
     isAdmin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        default: 0
     },
     createdAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
     },
     updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false
-    },
-    lastLogin: {
-        type: Sequelize.DATE,
-        allowNull: false
-    },
+        allowNull: false,
+    }
 })
 
 module.exports = User;
