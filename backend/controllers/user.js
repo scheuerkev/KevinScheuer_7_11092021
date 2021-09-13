@@ -3,7 +3,6 @@ const db = require('../config/database.js');
 const User = require('../models/User.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {Sequelize} = require("sequelize");
 
 //Dotenv requirement to load locals env variables
 require('dotenv').config();
@@ -16,9 +15,7 @@ exports.signup = (req, res) => {
     if (!(emailMask.test(req.body.email))) {
         return res.status(400).json({message: 'Please provide a valid email address'});
     }
-    User.findOne({
-        where: {email: req.body.email}
-    })
+    User.findOne({where: {email: req.body.email}})
         .then(user => {
             if (user) return res.status(409).json({message: 'This user already exists'});
             bcrypt.hash(req.body.password, 10)
@@ -45,7 +42,7 @@ exports.signup = (req, res) => {
 };
 
 exports.login = (req, res) => {
-    User.findOne( { where: {email: req.body.email }} )
+    User.findOne({where: {email: req.body.email}})
         .then(user => {
             if (!user) return res.status(404).json({message: 'Unable to find user with this email'});
 
@@ -62,22 +59,30 @@ exports.login = (req, res) => {
                         )
                     });
                 })
-                .catch(error => res.status(500).json({ error }));
+                .catch(err => res.status(500).json({ err }));
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(err => res.status(500).json({ err }));
 };
 
 exports.getProfile = (req, res) => {
-User.findOne( { where: {id: req.params.id }})
-    .then(profile => res.status(200).json(profile))
-    .catch(err => res.status(400).json({ err }));
+    User.findOne({ where: { id: req.params.id }})
+        .then(profile => res.status(200).json(profile))
+        .catch(err => res.status(400).json({ err }));
 }
 
 exports.updateProfile = (req, res) => {
-
+User.update({ ...req.body, id: req.params.id }, { where: { id: req.params.id }} )
+    .then(() => res.status(200).json({ message: 'User successfully updated' }))
+    .catch(err => res.status(400).json({ err }));
 }
 
 exports.deleteProfile = (req, res) => {
-
+    User.findOne({ where: { id: req.params.id }})
+        .then(profile => {
+            User.destroy({ where: { id: req.params.id }})
+                .then(() => res.status(200).json({ message: 'User successfully deleted' }))
+                .catch(err => res.status(400).json({ err }));
+        })
+        .catch(err => res.status(500).json({ err }));
 }
 
