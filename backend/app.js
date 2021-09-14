@@ -36,7 +36,7 @@ const path = require('path');
 
 //Importing routers
 const userRoutes = require('./routes/user.js');
-//const sauceRoutes  = require('./routes/sauce.js');
+const postRoutes  = require('./routes/post.js');
 
 //Launching app
 const app = express();
@@ -61,10 +61,12 @@ app.use((req, res, next) => {
 
 
 //Calls
-//app.use('/api/', apiLimiter);
+app.use('/api/', apiLimiter);
 app.use(express.json());
 app.use(helmet());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth', userRoutes);
+app.use('/api/post', postRoutes);
 
 
 //Export the app

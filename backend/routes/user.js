@@ -160,8 +160,6 @@ const userCtrl = require('../controllers/user.js');
  * */
 
 //User CRUD
-//router.post('/signup', passwordValidation, userCtrl.signup);
-//router.post('/login', userCtrl.login);
 router.post('/signup', passwordValidator, userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.get('/profile/:id', auth, userCtrl.getProfile);
