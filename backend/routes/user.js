@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/database.js');
+const auth = require('../middlewares/auth.js');
+const multerAvatar = require('../middlewares/multer-avatar-config.js');
+const passwordValidator = require('../middlewares/passwordValidator.js');
 
 //User routes requirements
 //const passwordValidation = require('../middlewares/passwordValidator.js');
@@ -160,11 +162,11 @@ const userCtrl = require('../controllers/user.js');
 //User CRUD
 //router.post('/signup', passwordValidation, userCtrl.signup);
 //router.post('/login', userCtrl.login);
-router.post('/signup', userCtrl.signup);
+router.post('/signup', passwordValidator, userCtrl.signup);
 router.post('/login', userCtrl.login);
-router.get('/profile/:id', userCtrl.getProfile);
-router.put('/profile/:id', userCtrl.updateProfile);
-router.delete('/profile/:id', userCtrl.deleteProfile);
+router.get('/profile/:id', auth, userCtrl.getProfile);
+router.put('/profile/:id', auth, multerAvatar, userCtrl.updateProfile);
+router.delete('/profile/:id', auth, userCtrl.deleteProfile);
 
 
 //Export router to the app

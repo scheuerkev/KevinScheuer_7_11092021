@@ -3,6 +3,8 @@ const db = require('../config/database.js');
 const User = require('../models/User.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const fs = require('fs');
 
 //Dotenv requirement to load locals env variables
 require('dotenv').config();
@@ -24,6 +26,7 @@ exports.signup = (req, res) => {
                         username: req.body.username,
                         email: req.body.email,
                         password: hash,
+                        avatar: req.body.avatar,
                         isAdmin: req.body.isAdmin,
                         createdAt: db.DATE,
                         updatedAt: db.DATE
@@ -55,34 +58,43 @@ exports.login = (req, res) => {
                         token: jwt.sign(
                             {userId: user.id},
                             process.env.TOKEN_KEY,
-                            {expiresIn: '1h'}
+                            {expiresIn: '24h'}
                         )
                     });
                 })
-                .catch(err => res.status(500).json({ err }));
+                .catch(err => res.status(500).json({err}));
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => res.status(500).json({err}));
 };
 
 exports.getProfile = (req, res) => {
-    User.findOne({ where: { id: req.params.id }})
+    User.findOne({where: {id: req.params.id}})
         .then(profile => res.status(200).json(profile))
-        .catch(err => res.status(400).json({ err }));
+        .catch(err => res.status(400).json({err}));
 }
 
 exports.updateProfile = (req, res) => {
-User.update({ ...req.body, id: req.params.id }, { where: { id: req.params.id }} )
-    .then(() => res.status(200).json({ message: 'User successfully updated' }))
-    .catch(err => res.status(400).json({ err }));
+    const userObject = req.file ?
+        {
+            ...req.body,
+            avatar: `${req.protocol}://${req.get('host')}/images/avatars/${req.file.filename}`
+        } : { ...req.body}
+    User.update({...userObject, id: req.params.id}, {where: {id: req.params.id}})
+        .then(() => res.status(200).json({message: 'User successfully updated'}))
+        .catch(err => res.status(400).json({err}));
 }
 
 exports.deleteProfile = (req, res) => {
     User.findOne({ where: { id: req.params.id }})
         .then(profile => {
-            User.destroy({ where: { id: req.params.id }})
-                .then(() => res.status(200).json({ message: 'User successfully deleted' }))
-                .catch(err => res.status(400).json({ err }));
+            //if(!profile.id) return res.status(404).json({message: 'Impossible to delete this user'});
+            const filename = profile.avatar.split('/images/avatars/')[1];
+            fs.unlink(`images/avatars/${filename}`, () => {
+                User.destroy({ where: { id: req.params.id }})
+                    .then(() => res.status(200).json({ message: 'User successfully deleted' }))
+                    .catch(err => res.status(400).json({err}));
+            });
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => res.status(500).json({err}));
 }
 

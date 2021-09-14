@@ -14,6 +14,10 @@ const User = db.define('User', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    avatar: {
+        type: Sequelize.STRING,
+        default: null
+    },
     isAdmin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
