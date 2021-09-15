@@ -1,12 +1,34 @@
 const db = require('../config/database.js');
 const Post = require('../models/Post.js');
 const User = require('../models/User.js');
-const Like = require('../models/Likes.js');
+const Like = require('../models/Like.js');
+const Comment = require('../models/comment.js');
 const fs = require('fs');
-const {where} = require("sequelize");
 
 exports.getPosts = (req, res) => {
-    Post.findAll()
+    Post.findAll({
+        include: [
+            {
+                model: User,
+                attributes: ["username", "avatar", "createdAt"]
+            },
+            {
+                model: Comment,
+                required: false,
+                attributes: ["content", "id"],
+                include: [
+                    {
+                        model: User,
+                        attributes: ["username", "avatar", "createdAt"]
+                    },
+                ],
+            },
+            {
+                model: Like,
+                required: false
+            },
+        ], order : [["updatedAt", "DESC"]],
+    })
         .then(posts => res.status(200).json(posts))
         .catch(err => res.status(400).json({err}));
 }
@@ -125,10 +147,28 @@ exports.manageArrows = (req, res) => {
     const id = req.params.id;
     switch (req.body.isUp) {
         case 0:
-            Post.findOne({ where: {id: id}})
+            Post.findByPk(id)
                 .then(post => {
+                    if (post) {
+                        Like.findOne({
+                            attributes: ["hasUpped", "hasDowned", "userId", "postId"],
+                            where: {userId: post.UserId}
+                        })
+                            .then(like => {
+                                if (like.hasUpped == req.userId) {
+
+                                }
+                                if (like.hasDowned == req.userId) {
+
+                                }
+                            })
+                    }
                 })
-                .catch();
+                .catch()
+            break;
+
+        case 1:
+            Post.update()
     }
 }
 
