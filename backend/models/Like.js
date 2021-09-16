@@ -1,21 +1,20 @@
-const Sequelize = require('sequelize');
-const db = require('../config/database.js');
+module.exports = (sequelize, Sequelize) => {
 
-const Like = db.define('Like', {
-    hasUpped: {
-        type: Sequelize.INTEGER,
-    },
-    hasUpped: {
-        type: Sequelize.INTEGER,
-    },
-    postId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    UserId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-}, {updatedAt: false})
-
-module.exports = Like;
+    const Like = sequelize.define('Like', {
+        hasUpped: {
+            type: Sequelize.INTEGER,
+        },
+        hasDowned: {
+            type: Sequelize.INTEGER,
+        },
+        postId: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
+        userId: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
+    }, {timestamps: false})
+    return Like;
+}

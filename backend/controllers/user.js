@@ -1,9 +1,8 @@
 //Controller user requirements
-const db = require('../config/database.js');
-const User = require('../models/User.js');
+const db = require('../models');
+const User = db.users;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const fs = require('fs');
 
 //Dotenv requirement to load locals env variables

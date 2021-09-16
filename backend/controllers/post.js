@@ -1,8 +1,8 @@
-const db = require('../config/database.js');
-const Post = require('../models/Post.js');
-const User = require('../models/User.js');
-const Like = require('../models/Like.js');
-const Comment = require('../models/comment.js');
+const db = require('../models');
+const Post = db.posts;
+const User = db.users;
+const Like = db.likes;
+const Comment = db.comments;
 const fs = require('fs');
 
 exports.getPosts = (req, res) => {
@@ -27,14 +27,37 @@ exports.getPosts = (req, res) => {
                 model: Like,
                 required: false
             },
-        ], order : [["updatedAt", "DESC"]],
+        ], order: [["updatedAt", "DESC"]],
     })
         .then(posts => res.status(200).json(posts))
         .catch(err => res.status(400).json({err}));
 }
 
 exports.getPost = (req, res) => {
-    Post.findOne({where: {id: req.params.id}})
+    Post.findOne({
+        where: {id: req.params.id},
+        include: [
+            {
+                model: User,
+                attributes: ["username", "avatar", "createdAt"]
+            },
+            {
+                model: Comment,
+                required: false,
+                attributes: ["content", "id"],
+                include: [
+                    {
+                        model: User,
+                        attributes: ["username", "avatar", "createdAt"]
+                    },
+                ],
+            },
+            {
+                model: Like,
+                required: false
+            },
+        ],
+    })
         .then(post => res.status(200).json(post))
         .catch(err => res.status(400).json({err}));
 }
@@ -122,16 +145,15 @@ exports.deletePost = (req, res) => {
                                         const filename = postById.image.split("/images/")[1];
                                         fs.unlink(`images/${filename}`, () => {
                                             Post.destroy({where: {id: postById.id}})
-                                                .then(() => res.end())
+                                                .then(() => res.status(201).json({message: 'Post deleted successfully!'}))
                                                 .catch(err => res.status(501).json({err}));
                                         });
                                     } else {
                                         Post.destroy({where: {id: postById.id}})
-                                            .then(() => res.end())
+                                            .then(() => res.status(201).json({message: 'Post deleted successfully!'}))
                                             .catch(err => res.status(501).json({err}));
                                     }
                                 })
-                                .then(() => res.status(201).json({message: 'Post deleted successfully!'}))
                                 .catch(err => res.status(401).json({err}));
                         } else {
                             return res.status(403).json({message: "You're not allow to delete this message"});
@@ -149,30 +171,110 @@ exports.manageArrows = (req, res) => {
         case 0:
             Post.findByPk(id)
                 .then(post => {
-                    if (post) {
-                        Like.findOne({
-                            attributes: ["hasUpped", "hasDowned", "userId", "postId"],
-                            where: {userId: post.UserId}
-                        })
-                            .then(like => {
-                                if (like.hasUpped == req.userId) {
-
-                                }
-                                if (like.hasDowned == req.userId) {
-
-                                }
+                        if (post) {
+                            Like.findOne({
+                                attributes: ["hasUpped", "hasDowned", "userId", "postId"],
+                                where: {userId: req.body.userId}
                             })
+                                .then(like => {
+                                        if (like.hasUpped == req.body.userId) {
+                                            Like.update({
+                                                hasUpped: null
+                                            }, {
+                                                where: {id: id}
+                                            })
+                                                .then(() => {
+                                                    Post.update({
+                                                        isUp: Post.decrement('isUp', {by: 1, where: {id: id}})
+                                                    }, {
+                                                        where: {id: id}
+                                                    })
+                                                        .then(res.status(201).json({message: 'Like successfully removed!'}))
+                                                        .catch(err => res.status(402).json({err}))
+                                                })
+                                                .catch(err => res.status(402).json({err}));
+                                        } else if (like.hasDowned == req.body.userId) {
+                                            Like.update({
+                                                hasDowned: null
+                                            }, {
+                                                where: {id: id}
+                                            })
+                                                .then(() => {
+                                                    Post.update({
+                                                        isDown: Post.decrement('isDown', {by: 1, where: {id: id}})
+                                                    }, {
+                                                        where: {id: id}
+                                                    })
+                                                        .then(res.status(201).json({message: 'Dislike successfully removed!'}))
+                                                        .catch(err => res.status(402).json({err}))
+                                                })
+                                                .catch(err => res.status(402).json({err}));
+
+                                        }
+                                    }
+                                )
+                        }
                     }
-                })
+                )
                 .catch()
             break;
 
-        case 1:
-            Post.update()
+        case
+        1
+        :
+            Post.findByPk(id)
+                .then(post => {
+                    Like.create({
+                        hasUpped: req.body.userId,
+                        postId: post.id,
+                        userId: req.body.userId
+                    })
+                        .then(() => {
+                            Post.update({
+                                    isUp: Post.increment('isUp', {by: 1, where: {id: id}})
+                                }, {where: {id: id}}
+                            )
+                                .then(res.status(201).json({message: 'Like successfully added!'}))
+                                .catch(err => res.status(402).json({err}));
+                        })
+                        .catch(err => res.status(404).json({err}));
+
+
+                })
+                .catch(err => res.status(500).json({err}));
+            break;
+
+        case
+        -1
+        :
+            Post.findByPk(id)
+                .then(post => {
+                    Like.create({
+                        hasDowned: req.body.userId,
+                        postId: post.id,
+                        userId: req.body.userId
+                    })
+                        .then(() => {
+                            Post.update({
+                                    isDown: Post.increment('isDown', {by: 1, where: {id: id}})
+                                }, {where: {id: id}}
+                            )
+                                .then(res.status(201).json({message: 'Dislike successfully added!'}))
+                                .catch(err => res.status(402).json({err}));
+                        })
+                        .catch(err => res.status(404).json({err}));
+
+
+                })
+                .catch(err => res.status(500).json({err}));
+            break;
+
+        default:
+            return res.status(500).json({message: 'Impossible to proceed value'});
+            break;
     }
+
 }
-
-
 
 
 
