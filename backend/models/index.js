@@ -11,13 +11,13 @@ db.posts = require('./Post.js')(sequelize, Sequelize);
 db.comments = require('./Comment.js')(sequelize, Sequelize);
 db.likes = require('./Like.js')(sequelize,Sequelize);
 
-db.users.hasMany(db.posts, { onDelete: "cascade", hooks: true });
-db.users.hasMany(db.comments, { onDelete: "cascade", hooks: true });
-db.users.hasMany(db.likes, { onDelete: "cascade", hooks: true });
+db.users.hasMany(db.posts, { onDelete: "CASCADE", hooks: true });
+db.users.hasMany(db.comments, { onDelete: "CASCADE", hooks: true });
+db.users.hasMany(db.likes, { onDelete: "CASCADE", hooks: true });
 
 db.posts.belongsTo(db.users, {foreignKey: "userId"});
-db.posts.hasMany(db.comments, { onDelete: "cascade", hooks: true });
-db.posts.hasMany(db.likes, { onDelete: "cascade", hooks: true });
+db.posts.hasMany(db.comments, { onDelete: "CASCADE", hooks: true });
+db.posts.hasMany(db.likes, { onDelete: "CASCADE", hooks: true });
 
 db.comments.belongsTo(db.users, {foreignKey: "userId"});
 db.comments.belongsTo(db.posts, {foreignKey: "postId"});
