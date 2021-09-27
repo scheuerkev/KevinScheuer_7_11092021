@@ -1,6 +1,5 @@
 <template>
   <v-app-bar app color="blue-grey darken-4" dark>
-
       <v-toolbar-title>
         <router-link to="/" class="text-decoration-none white--text">
         <v-img src="../../assets/icon-left-font-monochrome-white.png" max-width="130" alt="Retour à l'accueil" />
@@ -17,7 +16,6 @@
       </template>
       <span>Tous les messages</span>
     </v-tooltip>
-
     <v-spacer></v-spacer>
     <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
@@ -27,7 +25,6 @@
       </template>
       <span>Mon profil</span>
     </v-tooltip>
-
     <v-spacer></v-spacer>
     <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
@@ -39,7 +36,6 @@
     </v-tooltip>
   </v-app-bar>
 </template>
-
 <script>
 
 export default {
@@ -55,7 +51,7 @@ export default {
       window.location.reload();
     },
     showProfile() {
-      this.$router.push(`/profile/${this.$store.state.userId}`);
+      this.$router.push(`/profile/${this.$store.state.user.userId}`);
     }
   },
 }

@@ -1,40 +1,47 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="800" elevation="5" flat>
-      <v-card-title class="justify-center">Mon profil Groupo'App</v-card-title>
+    <v-card
+        class="mx-auto"
+        max-width="800"
+        elevation="5"
+        flat
+    >
+      <v-card-title class="justify-center">
+        Bonjour {{ user.username }}, voici votre profil Groupo'App
+      </v-card-title>
       <v-row no-gutters>
-        <v-col class="md-6">
+        <v-col>
           <v-avatar size="100">
             <v-img :src="avatar"></v-img>
           </v-avatar>
           <v-list-item color="rgba(0, 0, 0, .4)">
             <v-list-item-content>
-              <v-list-item-title class="title">{{ username }}</v-list-item-title>
-              <v-list-item-subtitle>{{ email }}</v-list-item-subtitle>
+              <v-list-item-title class="title">
+                {{ user.username }}
+              </v-list-item-title>
+              <v-divider inset />
+              <v-list-item-subtitle>
+                <br>
+                Adresse mail enregistrée :
+                <br>
+                {{ user.email }}
+                <br>
+                <br>
+                Membre depuis le :
+                <br>
+                {{user.createdAt | formatDate}}
+                <br>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </v-col>
-        <v-col class="md-6">
-          <v-form v-model="valid" ref="form">
-            <v-text-field
-                outlined v-model="file"
-                label="Email"
-                type="email"
-                prepend-icon="far fa-camera-retro">
-              Changer l'avatar
-            </v-text-field>
-            <v-btn dark>Mettre à jour le </v-btn>
-            <v-text-field>Changer le nom</v-text-field>
-
-          </v-form>
         </v-col>
       </v-row>
     </v-card>
   </v-container>
 </template>
+
 <script>
-//import axios from "axios";
-//import $store from "@/store/index";
+import {mapState} from 'vuex';
 
 export default {
   name: "Profile",
@@ -101,18 +108,11 @@ export default {
   //   },
   // },
   computed: {
-    username() {
-      return this.$store.state.username;
-    },
-    email() {
-      return this.$store.state.email;
-    },
-    isAdmin() {
-      return this.$store.state.isAdmin;
-    },
+      ...mapState([
+          'user',
+      ])
   },
 };
+
 </script>
 
-<style scoped>
-</style>

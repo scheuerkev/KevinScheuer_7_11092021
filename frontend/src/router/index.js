@@ -7,7 +7,6 @@ import Profile from "@/components/profile/Profile.vue";
 import Posts from "@/views/Posts.vue";
 import $store from "../store/index.js"
 
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -53,7 +52,12 @@ router.beforeEach(async (to, from, next) => {
         if (to.matched.some(routes => routes.meta.requiresAuth)) {
             $store.dispatch('getUser', localStorage.getItem('token'))
             await sleep(100);
-            if ($store.state.isLoggedIn) return next();
+            if ($store.state.isLoggedIn) {
+                $store.commit('SET_USER_INFO', {
+                    show: "false",
+                })
+                return next();
+            }
             else {
                 $store.commit('SET_USER_INFO', {
                     show: "true",

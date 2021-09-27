@@ -1,20 +1,21 @@
 <template>
   <v-app>
-    <MainNav />
+    <MainNav/>
     <v-main>
-      <router-view />
+      <router-view/>
     </v-main>
-    <Footer />
+    <Footer/>
   </v-app>
 </template>
 
 <script>
 import MainNav from '@/components/layout/MainNav.vue';
 import Footer from '@/components/layout/Footer.vue';
+
 export default {
   components: {
     Footer, MainNav,
-    },
+  },
   mounted() {
     const token = localStorage.getItem('token');
     this.$store.dispatch('getUser', token);

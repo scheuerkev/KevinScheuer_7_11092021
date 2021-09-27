@@ -1,29 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-//import userService from "@/services/userService";
-require('dotenv').config();
 import axios from "axios";
 
 Vue.use(Vuex)
-
-
+//Setting STORE as a SSoT
+//Store state
 const state = {
     user: {},
     isLoggedIn: false,
     posts: [],
     comments: [],
-    errors: [],
     userInfo: {},
 }
 
+//Store mutations
 const mutations = {
     SET_USER: (state, user) => {
-        state.userId = user.userId;
-        state.email = user.email;
-        state.avatar = user.avatar;
-        state.isAdmin = user.isAdmin;
-        state.createdAt = user.createdAt;
-        state.updatedAt = user.updatedAt;
+        state.user.userId = user.userId;
+        state.user.email = user.email;
+        state.user.avatar = user.avatar;
+        state.user.username = user.username;
+        state.user.isAdmin = user.isAdmin;
+        state.user.createdAt = user.createdAt;
+        state.user.updatedAt = user.updatedAt;
     },
     SET_USER_INFO: (state, userInfo) => {
         state.userInfo = userInfo;
@@ -31,19 +30,19 @@ const mutations = {
     SET_IS_LOGGED: (state, bool) => {
         state.isLoggedIn = bool;
     },
-    SET_ERROR: (state, error) => {
-        state.errors = [error, ...state.error];
-    },
     LOG_OUT_USER(state){
-        state.token = null;
-        state.userId = null;
-        state.username = null;
-        state.isAdmin = 0;
-        state.isLoggedIn = false;
+        state.user.token = null;
+        state.user.userId = null;
+        state.user.username = null;
+        state.user.isAdmin = 0;
+        state.user.isLoggedIn = false;
     }
 }
 
+//Store actions
 const actions = {
+    //loginUser takes a payload (obj : email/password) and return userId and token
+    //Token is dispatched into a new action to get user info to commit changes on user state
     loginUser: ({commit, dispatch}, payload) => {
         axios
             .post('http://localhost:3000/api/auth/login', payload)
@@ -63,6 +62,10 @@ const actions = {
                 });
         });
     },
+    //getUser is call by loginUser action and on each "auth needed" routes. This logic is implemented
+    //on routing logic. Token is headed to request and response data provide user global state
+    //As far as this logic is specific, the way allow to ensure application security. If corrupted
+    //the token (stored in the localStorage) rightly fails global auth app logic
     getUser({commit}, token) {
       axios
           .get("http://localhost:3000/api/auth/me", {
@@ -82,19 +85,7 @@ const actions = {
           }
           );
     },
-    // checkAuth({ commit },token) {
-    //      axios
-    //         .get("http://localhost:3000/api/auth/me", {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             }})
-    //         .then(() => {
-    //             commit('SET_IS_LOGGED', true);
-    //         })
-    //         .catch(() => {
-    //             commit('SET_IS_LOGGED', false);
-    //         })
-    // },
+    //registerUser action allow new user to register an account into app. Form survey is locally set
     registerUser: ({commit}, payload) => {
         payload = {
             ...payload,
@@ -114,21 +105,11 @@ const actions = {
             });
         });
     },
-    setUserInfo({ commit }, userInfo) {
-        userInfo.showing = true;
-        userInfo.color = userInfo.color || "green";
-        commit("SET_USER_INFO", userInfo);
-    },
-    logout({commit}) {
-        commit('LOG_OUT_USER');
-        localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn');
-
-    }
 }
 
 const getters = {}
 
+//store consumption
 export default new Vuex.Store({
     state: state,
     mutations: mutations,

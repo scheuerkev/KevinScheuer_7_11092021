@@ -7,7 +7,3 @@ export default {
   name: "Posts.vue"
 }
 </script>
-
-<style scoped>
-
-</style>

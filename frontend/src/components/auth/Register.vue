@@ -1,33 +1,22 @@
 <template>
-
-<!--        <v-container>-->
-<!--        <h2 class="text-center" >Créez votre compte en un clic</h2>-->
-<!--        <v-form v-model="valid" ref="form">-->
-<!--        </v-form>-->
-<!--        <v-btn dark @click="submitForm">S'inscrire</v-btn>-->
-<!--          <br>-->
-<!--          <p>Déjà un compte Groupo'App ? | <router-link to="/">Se connecter</router-link></p>-->
-<!--        </v-container>-->
-
   <v-container>
-    <v-card elevation="5" flat height="100%" max-width="800">
-      <v-card-title class="justify-center" style="font-size:1.8rem">
+    <v-card
+        elevation="5"
+        flat height="100%"
+        class="mx-auto"
+        max-width="800"
+    >
+      <v-card-title
+          class="justify-center"
+          style="font-size:1.8rem"
+      >
         Créez votre compte Groupo'App en un clic
       </v-card-title>
-      <v-img height="50" contain src="../../assets/logo.png"/>
+      <v-img
+          height="50"
+          contain src="../../assets/logo.png"
+      />
       <v-card-text>
-<!--        <v-form v-model="valid" ref="form">-->
-<!--          <v-text-field  outlined v-model="userInfo.username" label="Identifiant" prepend-icon="far fa-user" :rules="usernameRules"/>-->
-<!--          <v-text-field outlined v-model="userInfo.email" label="Email" type="email" prepend-icon="far fa-paper-plane" :rules="emailRules"/>-->
-<!--          <v-text-field outlined v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Mot de passe" prepend-icon="fas fa-key" :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>-->
-<!--          <v-card-actions>-->
-<!--            <v-layout row>-->
-<!--              <v-flex justify-center>-->
-<!--                <v-btn dark @click="submitForm()">S'inscrire</v-btn>-->
-<!--              </v-flex>-->
-<!--            </v-layout>-->
-<!--          </v-card-actions>-->
-<!--        </v-form>-->
         <v-form
             ref="form"
             v-model="valid"
@@ -42,7 +31,6 @@
               required
               outlined
           ></v-text-field>
-
           <v-text-field
               v-model="userInfo.email"
               prepend-icon="far fa-paper-plane"
@@ -51,7 +39,6 @@
               required
               outlined
           ></v-text-field>
-
           <v-text-field
               v-model="userInfo.password"
               prepend-icon="fas fa-key"
@@ -63,8 +50,6 @@
               required
               outlined
           ></v-text-field>
-
-
           <v-btn
               :disabled="!valid"
               color="success"
@@ -73,7 +58,6 @@
           >
             s'inscrire
           </v-btn>
-
           <v-btn
               color="error"
               class="mr-4"
@@ -81,21 +65,20 @@
           >
             remettre à zéro
           </v-btn>
-
         </v-form>
       </v-card-text>
     </v-card>
     <br>
     <v-layout>
       <v-flex justify-center>
-        Déjà un compte Groupo'App ?  |
-        <router-link to="/">Se connecter</router-link>
+        Déjà un compte Groupo'App ? |
+        <router-link to="/">
+          Se connecter
+        </router-link>
       </v-flex>
     </v-layout>
     <br>
-    <UserInfo />
-
-
+    <UserInfo/>
   </v-container>
 </template>
 
@@ -133,7 +116,7 @@ export default {
     register() {
       if (this.$refs.form.validate()) this.$store.dispatch("registerUser", this.userInfo);
     },
-    reset () {
+    reset() {
       this.$refs.form.reset()
     },
   },
