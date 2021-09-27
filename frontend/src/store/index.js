@@ -1,18 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-//import persistedState from 'vuex-persistedstate'
 //import userService from "@/services/userService";
 require('dotenv').config();
 import axios from "axios";
 
 Vue.use(Vuex)
 
+
 const state = {
-    token: null,
-    userId: null,
-    username: null,
-    isAdmin: null,
-    isLoggedIn: null,
+    user: {},
+    isLoggedIn: false,
     posts: [],
     comments: [],
     errors: [],
@@ -20,50 +17,44 @@ const state = {
 }
 
 const mutations = {
-    SET_TOKEN: (state, token) => {
-        state.token = token;
-    },
     SET_USER: (state, user) => {
-        state.userId = user;
+        state.userId = user.userId;
+        state.email = user.email;
+        state.avatar = user.avatar;
+        state.isAdmin = user.isAdmin;
+        state.createdAt = user.createdAt;
+        state.updatedAt = user.updatedAt;
     },
-    SET_USERNAME: (state, username) => {
-        state.username = username;
+    SET_USER_INFO: (state, userInfo) => {
+        state.userInfo = userInfo;
     },
-    SET_ADMIN: (state, admin) => {
-        state.isAdmin = admin;
+    SET_IS_LOGGED: (state, bool) => {
+        state.isLoggedIn = bool;
     },
     SET_ERROR: (state, error) => {
         state.errors = [error, ...state.error];
     },
-    SET_USER_INFO: (state, userInfo) => {
-        state.userInfo = userInfo;
+    LOG_OUT_USER(state){
+        state.token = null;
+        state.userId = null;
+        state.username = null;
+        state.isAdmin = 0;
+        state.isLoggedIn = false;
     }
 }
 
 const actions = {
-    setToken: ({commit}, token) => {
-        commit("SET_TOKEN", token);
-    },
-    setUser: ({commit}, user) => {
-        commit("SET_USER", user);
-    },
-    setUsername: ({commit}, username) => {
-        commit("SET_USERNAME", username);
-    },
-    setIsAdmin: ({commit}, isAdmin) => {
-        commit("SET_ADMIN", isAdmin);
-    },
-    loginUser: ({commit}, payload) => {
+    loginUser: ({commit, dispatch}, payload) => {
         axios
             .post('http://localhost:3000/api/auth/login', payload)
             .then((response) => {
-                commit("SET_TOKEN", response.data.token);
-                commit("SET_USER", response.data.userId);
                 commit("SET_USER_INFO", {
                     show: "true",
                     color: "green",
                     message: 'Welcome back 👋',
                 });
+                localStorage.setItem('token', response.data.token);
+                dispatch('getUser', response.data.token);
             }).catch(() => {
                 commit("SET_USER_INFO", {
                     show: "true",
@@ -72,6 +63,38 @@ const actions = {
                 });
         });
     },
+    getUser({commit}, token) {
+      axios
+          .get("http://localhost:3000/api/auth/me", {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          }).then(res => {
+          const user = {...res.data};
+          commit('SET_USER', user);
+          commit("SET_IS_LOGGED", true);
+      })
+          .catch(err => {
+            if(err.response.status === 403) {
+                commit('LOG_OUT_USER');
+                commit('SET_IS_LOGGED', false);
+            }
+          }
+          );
+    },
+    // checkAuth({ commit },token) {
+    //      axios
+    //         .get("http://localhost:3000/api/auth/me", {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             }})
+    //         .then(() => {
+    //             commit('SET_IS_LOGGED', true);
+    //         })
+    //         .catch(() => {
+    //             commit('SET_IS_LOGGED', false);
+    //         })
+    // },
     registerUser: ({commit}, payload) => {
         payload = {
             ...payload,
@@ -96,13 +119,17 @@ const actions = {
         userInfo.color = userInfo.color || "green";
         commit("SET_USER_INFO", userInfo);
     },
+    logout({commit}) {
+        commit('LOG_OUT_USER');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isLoggedIn');
+
+    }
 }
 
 const getters = {}
 
 export default new Vuex.Store({
-    strict: true,
-    //plugins: [persistedState()],
     state: state,
     mutations: mutations,
     actions: actions,

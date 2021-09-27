@@ -14,7 +14,11 @@ import Footer from '@/components/layout/Footer.vue';
 export default {
   components: {
     Footer, MainNav,
-    }
+    },
+  mounted() {
+    const token = localStorage.getItem('token');
+    this.$store.dispatch('getUser', token);
+  }
 }
 </script>
 

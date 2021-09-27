@@ -14,7 +14,7 @@
   <!--      </v-card-actions>-->
   <!--    </v-card>-->
   <v-container>
-    <v-card elevation="5" flat height="100%">
+    <v-card max-width="800" elevation="5" flat height="100%">
       <v-card-title class="justify-center" style="font-size:1.8rem">
         Bienvenue sur Groupo'App
       </v-card-title>

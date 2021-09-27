@@ -10,7 +10,7 @@
 <!--        </v-container>-->
 
   <v-container>
-    <v-card elevation="5" flat height="100%">
+    <v-card elevation="5" flat height="100%" max-width="800">
       <v-card-title class="justify-center" style="font-size:1.8rem">
         Créez votre compte Groupo'App en un clic
       </v-card-title>

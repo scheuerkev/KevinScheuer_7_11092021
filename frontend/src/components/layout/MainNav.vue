@@ -9,9 +9,9 @@
     <v-spacer />
     <v-spacer />
     <v-spacer />
-    <v-tooltip v-if="true">
+    <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn to="/messages" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de tous les posts">
+        <v-btn to="/posts" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de tous les posts">
           <v-icon>fas fa-inbox</v-icon>
         </v-btn>
       </template>
@@ -19,9 +19,9 @@
     </v-tooltip>
 
     <v-spacer></v-spacer>
-    <v-tooltip v-if="true">
+    <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn to="/profile" icon v-bind="attrs" v-on="on" aria-label="Voir mon profil">
+        <v-btn icon v-bind="attrs" v-on="on" aria-label="Voir mon profil" @click="showProfile()">
           <v-icon>fas fa-user-circle</v-icon>
         </v-btn>
       </template>
@@ -29,9 +29,9 @@
     </v-tooltip>
 
     <v-spacer></v-spacer>
-    <v-tooltip v-if="true">
+    <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-bind="attrs" v-on="on" aria-label="Se déconnecter">
+        <v-btn icon v-bind="attrs" v-on="on" aria-label="Se déconnecter" @click="logout()">
           <v-icon>fas fa-sign-out-alt</v-icon>
         </v-btn>
       </template>
@@ -45,7 +45,18 @@
 export default {
   name: "MainNav.vue",
   computed: {
-
+    user() {
+      return this.$store.state.isLoggedIn;
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('token');
+      window.location.reload();
+    },
+    showProfile() {
+      this.$router.push(`/profile/${this.$store.state.userId}`);
+    }
   },
 }
 </script>
