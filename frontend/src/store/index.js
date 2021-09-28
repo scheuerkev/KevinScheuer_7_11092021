@@ -30,12 +30,18 @@ const mutations = {
     SET_IS_LOGGED: (state, bool) => {
         state.isLoggedIn = bool;
     },
-    LOG_OUT_USER(state){
+    UPDATE_EMAIL: (state, email) => {
+        state.user.email = email;
+    },
+    LOG_OUT_USER(state) {
         state.user.token = null;
         state.user.userId = null;
         state.user.username = null;
         state.user.isAdmin = 0;
         state.user.isLoggedIn = false;
+    },
+    SET_POSTS: (state, posts) => {
+        state.posts = posts;
     }
 }
 
@@ -55,11 +61,11 @@ const actions = {
                 localStorage.setItem('token', response.data.token);
                 dispatch('getUser', response.data.token);
             }).catch(() => {
-                commit("SET_USER_INFO", {
-                    show: "true",
-                    color: "red",
-                    message: "unable to find this user, sorry",
-                });
+            commit("SET_USER_INFO", {
+                show: "true",
+                color: "red",
+                message: "unable to find this user, sorry",
+            });
         });
     },
     //getUser is call by loginUser action and on each "auth needed" routes. This logic is implemented
@@ -67,23 +73,23 @@ const actions = {
     //As far as this logic is specific, the way allow to ensure application security. If corrupted
     //the token (stored in the localStorage) rightly fails global auth app logic
     getUser({commit}, token) {
-      axios
-          .get("http://localhost:3000/api/auth/me", {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-              },
-          }).then(res => {
-          const user = {...res.data};
-          commit('SET_USER', user);
-          commit("SET_IS_LOGGED", true);
-      })
-          .catch(err => {
-            if(err.response.status === 403) {
-                commit('LOG_OUT_USER');
-                commit('SET_IS_LOGGED', false);
-            }
-          }
-          );
+        axios
+            .get("http://localhost:3000/api/auth/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(res => {
+            const user = {...res.data};
+            commit('SET_USER', user);
+            commit("SET_IS_LOGGED", true);
+        })
+            .catch(err => {
+                    if (err.response.status === 403) {
+                        commit('LOG_OUT_USER');
+                        commit('SET_IS_LOGGED', false);
+                    }
+                }
+            );
     },
     //registerUser action allow new user to register an account into app. Form survey is locally set
     registerUser: ({commit}, payload) => {
@@ -105,9 +111,51 @@ const actions = {
             });
         });
     },
+    deleteAccount({commit}) {
+
+    },
+    updateEmail({commit}, payload) {
+        const sendPayload = {
+            email: payload.state.user.email
+        }
+        const token = localStorage.getItem('token');
+        axios
+            .put("http://localhost:3000/api/auth/profile/" + payload.state.user.userId, JSON.stringify(sendPayload),
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+            .then((res) => {
+                commit('UPDATE_EMAIL', res.data.email);
+            })
+            .catch((err) => {
+                console.log(err)
+            });
+    },
+    getAllPosts({commit}) {
+        const token = localStorage.getItem('token');
+        axios
+            .get("http://localhost:3000/api/post", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(res => {
+            const posts = {...res.data};
+            commit('SET_POSTS', posts);
+            console.log(posts);
+        })
+            .catch(err => {
+                console.log(err.message);
+            });
+    }
 }
 
-const getters = {}
+const getters = {
+    getPosts(state) {
+        return state.posts;
+    }
+}
 
 //store consumption
 export default new Vuex.Store({
