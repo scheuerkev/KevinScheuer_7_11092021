@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from "axios";
+import router from '@/router/index.js';
 
 Vue.use(Vuex)
 //Setting STORE as a SSoT
@@ -49,7 +50,8 @@ const mutations = {
 const actions = {
     //loginUser takes a payload (obj : email/password) and return userId and token
     //Token is dispatched into a new action to get user info to commit changes on user state
-    loginUser: ({commit, dispatch}, payload) => {
+    loginUser: ({commit, dispatch, getters}, payload) => {
+        const user = getters.getUser;
         axios
             .post('http://localhost:3000/api/auth/login', payload)
             .then((response) => {
@@ -60,6 +62,7 @@ const actions = {
                 });
                 localStorage.setItem('token', response.data.token);
                 dispatch('getUser', response.data.token);
+                setTimeout(()=> router.push('/profile/'+user.userId), 1500)
             }).catch(() => {
             commit("SET_USER_INFO", {
                 show: "true",
@@ -102,6 +105,12 @@ const actions = {
             .post('http://localhost:3000/api/auth/signup', payload)
             .then((response) => {
                 console.log(response);
+                router.push('/login');
+                commit("SET_USER_INFO", {
+                    show: "true",
+                    color: "green",
+                    message: "compte bien créé, merci de vous identifier",
+                });
             }).catch((err) => {
             console.log(err);
             commit("SET_USER_INFO", {
@@ -111,23 +120,45 @@ const actions = {
             });
         });
     },
-    deleteAccount({commit}) {
+    deleteAccount({commit, getters}) {
+        const user = getters.getUser;
+        const token = localStorage.getItem('token');
 
+        axios
+            .delete("http://localhost:3000/api/auth/profile/" + user.userId, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    commit("LOG_OUT_USER");
+                    commit("SET_IS_LOGGED", false);
+                    router.push("/");
+                    commit("SET_USER_INFO", {
+                        show: "true",
+                        color: "green",
+                        message: "votre compte à bien été supprimé 👋"
+                    })
+                } else (alert('Out of bound'));
+            })
+            .catch(err => console.log('unable to delete user: ', err.message));
     },
-    updateEmail({commit}, payload) {
+    updateEmail({commit, getters}, payload) {
+        const user = getters.getUser;
         const sendPayload = {
             email: payload.state.user.email
         }
         const token = localStorage.getItem('token');
         axios
-            .put("http://localhost:3000/api/auth/profile/" + payload.state.user.userId, JSON.stringify(sendPayload),
+            .put("http://localhost:3000/api/auth/profile/" + user.userId, JSON.stringify(sendPayload),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 })
             .then((res) => {
-                commit('UPDATE_EMAIL', res.data.email);
+                commit('SET_USER', res.data);
             })
             .catch((err) => {
                 console.log(err)
@@ -154,6 +185,9 @@ const actions = {
 const getters = {
     getPosts(state) {
         return state.posts;
+    },
+    getUser(state) {
+        return state.user;
     }
 }
 
