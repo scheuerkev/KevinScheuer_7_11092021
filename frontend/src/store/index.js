@@ -223,12 +223,12 @@ const actions = {
             }).then(res => {
             const posts = {...res.data};
             commit('SET_POSTS', posts);
-            console.log(posts);
         })
             .catch(err => {
                 console.log(err.message);
             });
-    }
+    },
+
 }
 
 const getters = {
