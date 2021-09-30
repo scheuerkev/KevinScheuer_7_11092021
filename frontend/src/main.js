@@ -28,6 +28,6 @@ Vue.filter('formatDate', function(value) {
 
 Vue.filter('formatDateHour', function(value) {
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY hh:mm')
+    return moment(String(value)).format('DD/MM/YYYY à hh:mm')
   }
 })

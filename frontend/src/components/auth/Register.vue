@@ -97,21 +97,18 @@ export default {
       email: null,
       password: null
     },
-    usernameRules: [
-      v => !!v || 'Un nom d\'utilisateur est obligatoire',
-      v => (v && v.length >= 8) || 'Le nom d\'utilisateur doit contenir au moins 8 caractères',
-    ],
-    emailRules: [
-      v => !!v || 'Une adresse e-mail valide est obligatoire',
-      v => /.+@.+\..+/.test(v) || 'Merci d\'entrer une adresse mail au format nom@domaine.hote',
-    ],
-    passwordRules: [
-      v => (v && v.length >= 8) || 'Le mot de passe d\'une longueur comprise entre 8 et 100 caractères',
-      v => /(?=.*[A-Za-z])/.test(v) || 'Le mot de passe doit contenir au moins une majuscule et une minuscule',
-      v => /(?=.*\d{2})/.test(v) || 'Le mot de passe doit contenir au moins deux chiffres',
-    ],
   }),
-
+  computed: {
+    emailRules() {
+      return this.$store.state.emailRules;
+    },
+    passwordRules() {
+      return this.$store.state.passwordRules;
+    },
+    usernameRules() {
+      return this.$store.state.usernameRules;
+    },
+  },
   methods: {
     register() {
       if (this.$refs.form.validate()) this.$store.dispatch("registerUser", this.userInfo);

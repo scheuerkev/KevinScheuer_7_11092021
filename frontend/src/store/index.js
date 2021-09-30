@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from "axios";
-import router from '@/router/index.js';
+import $router from '@/router/index.js';
 
 Vue.use(Vuex)
-//Setting STORE as a SSoT
+//Setting VUEX STORE as a SSoT
 //Store state
 const state = {
     user: {},
@@ -12,6 +12,19 @@ const state = {
     posts: [],
     comments: [],
     userInfo: {},
+    usernameRules: [
+        v => !!v || 'Un nom d\'utilisateur est obligatoire',
+        v => (v && v.length >= 8) || 'Le nom d\'utilisateur doit contenir au moins 8 caractères',
+    ],
+    emailRules: [
+        v => !!v || 'Une adresse e-mail valide est obligatoire',
+        v => /.+@.+\..+/.test(v) || 'Merci d\'entrer une adresse mail au format nom@domaine.hote',
+    ],
+    passwordRules: [
+        v => (v && v.length >= 8) || 'Le mot de passe d\'une longueur comprise entre 8 et 100 caractères',
+        v => /(?=.*[A-Za-z])/.test(v) || 'Le mot de passe doit contenir au moins une majuscule et une minuscule',
+        v => /(?=.*\d{2})/.test(v) || 'Le mot de passe doit contenir au moins deux chiffres',
+    ],
 }
 
 //Store mutations
@@ -31,8 +44,8 @@ const mutations = {
     SET_IS_LOGGED: (state, bool) => {
         state.isLoggedIn = bool;
     },
-    UPDATE_EMAIL: (state, email) => {
-        state.user.email = email;
+    UPDATE_USER: (state, user) => {
+        state.user = {...state.user, user}
     },
     LOG_OUT_USER(state) {
         state.user.token = null;
@@ -62,7 +75,7 @@ const actions = {
                 });
                 localStorage.setItem('token', response.data.token);
                 dispatch('getUser', response.data.token);
-                setTimeout(()=> router.push('/profile/'+user.userId), 1500)
+                setTimeout(() => $router.push('/profile/' + user.userId), 1500)
             }).catch(() => {
             commit("SET_USER_INFO", {
                 show: "true",
@@ -105,7 +118,7 @@ const actions = {
             .post('http://localhost:3000/api/auth/signup', payload)
             .then((response) => {
                 console.log(response);
-                router.push('/login');
+                $router.push('/login');
                 commit("SET_USER_INFO", {
                     show: "true",
                     color: "green",
@@ -134,7 +147,7 @@ const actions = {
                 if (res.status === 200) {
                     commit("LOG_OUT_USER");
                     commit("SET_IS_LOGGED", false);
-                    router.push("/");
+                    $router.push("/");
                     commit("SET_USER_INFO", {
                         show: "true",
                         color: "green",
@@ -144,28 +157,64 @@ const actions = {
             })
             .catch(err => console.log('unable to delete user: ', err.message));
     },
-    updateEmail({commit, getters}, payload) {
+    updateProfile({commit, getters}, payload) {
         const user = getters.getUser;
-        const sendPayload = {
-            email: payload.state.user.email
-        }
         const token = localStorage.getItem('token');
+
+        console.log(payload);
         axios
-            .put("http://localhost:3000/api/auth/profile/" + user.userId, JSON.stringify(sendPayload),
+            .put("http://localhost:3000/api/auth/profile/" + user.userId, payload,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 })
             .then((res) => {
-                commit('SET_USER', res.data);
+                commit('UPDATE_USER', res.data);
+                commit("SET_USER_INFO", {
+                    show: "true",
+                    color: "green",
+                    message: 'Votre profil a correctement été mis à jour 💪',
+                });
             })
-            .catch((err) => {
-                console.log(err)
+            .catch(() => {
+                commit("SET_USER_INFO", {
+                    show: "true",
+                    color: "red",
+                    message: 'Cette adresse mail est déjà utilisée ⛔️',
+                });
             });
+    },
+    createPost({commit}, payload) {
+        const token = localStorage.getItem('token');
+
+        axios
+            .post('http://localhost:3000/api/post/', payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            .then((response) => {
+                console.log(response);
+                commit("SET_USER_INFO", {
+                    show: "true",
+                    color: "green",
+                    message: "post bien créé !",
+                });
+                setTimeout(() => $router.push('/posts'), 2000);
+            }).catch((err) => {
+            console.log(err);
+            commit("SET_USER_INFO", {
+                show: "true",
+                color: "red",
+                message: "il y'a eu un big pb brow",
+            });
+        });
+
     },
     getAllPosts({commit}) {
         const token = localStorage.getItem('token');
+
         axios
             .get("http://localhost:3000/api/post", {
                 headers: {

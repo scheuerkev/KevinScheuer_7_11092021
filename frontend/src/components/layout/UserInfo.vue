@@ -13,6 +13,11 @@
 import {mapState} from 'vuex';
 export default {
   name: "UserInfo",
+  state () {
+    return {
+      show: false
+    }
+  },
   computed: {
     ...mapState(['userInfo']),
   },

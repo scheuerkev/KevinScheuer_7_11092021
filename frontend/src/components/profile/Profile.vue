@@ -54,6 +54,7 @@
               <v-text-field
                   outlined
                   v-model="user.email"
+                  :rules="emailRules"
                   label="Email"
                   type="email"
                   prepend-icon="far fa-paper-plane"
@@ -67,6 +68,7 @@
               <v-text-field
                   outlined
                   v-model="user.username"
+                  :rules="usernameRules"
                   label="Nom d'utilisateur"
                   type="text"
                   prepend-icon="fas fa-user-edit"
@@ -76,19 +78,21 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-file-input
-                  accept="image/*"
-                  label="Uploader une image"
-                  prepend-icon="fas fa-paperclip"
-              ></v-file-input>
+              <input
+                  type="file"
+                  ref="file"
+                  name="file"
+                  id="file"
+                  @change="fileHandler" />
             </v-col>
-
             <br/>
           </v-row>
           <v-btn align-self="auto" color="primary" @click="updateProfile()">Mettre à jour</v-btn>
         </v-form>
         <br>
       </v-card-text>
+      <UserInfo />
+      <br>
     </v-card>
     <br>
     <v-card
@@ -108,14 +112,14 @@
       <v-row>
         <v-col>
           <v-switch class="justify-center"
-              v-model="valid"
-              label="J'ai compris et je veux supprimer mon compte"
+                    v-model="valid"
+                    label="J'ai compris et je veux supprimer mon compte"
           ></v-switch>
         </v-col>
       </v-row>
       <v-row>
-        <v-col >
-        <v-btn color="error" v-bind:disabled="!valid" @click="deleteAccount()">Supprimer mon compte</v-btn>
+        <v-col>
+          <v-btn color="error" :disabled="!valid" @click="deleteAccount()">Supprimer mon compte</v-btn>
         </v-col>
       </v-row>
       <br>
@@ -125,9 +129,13 @@
 
 <script>
 import {mapState} from 'vuex';
+import UserInfo from "@/components/layout/UserInfo";
 
 export default {
   name: "Profile",
+  components: {
+    UserInfo,
+  },
   data() {
     return {
       file: "",
@@ -137,77 +145,41 @@ export default {
     };
   },
   methods: {
-    updateEmail() {
-      const newData = this.$store.state.user.email;
+    updateProfile() {
+      const fd = new FormData();
 
-      console.log(newData)
-      this.$store.dispatch('updateEmail', newData);
+      if (this.file) {
+        fd.append('email', this.$store.state.user.email);
+        fd.append('username', this.$store.state.user.username);
+        fd.append('avatar', this.file);
+      } else {
+        fd.append('email', this.$store.state.user.email);
+        fd.append('username', this.$store.state.user.username);
+      }
+      this.$store.dispatch('updateProfile', fd);
     },
     deleteAccount() {
       this.$store.dispatch('deleteAccount');
-    }
+    },
+    fileHandler() {
+      this.file = this.$refs.file.files[0];
+    },
   },
-  // methods: {
-  //   selectFile() {
-  //     this.file = this.$refs.file.files[0];
-  //     this.imgPreview = URL.createObjectURL(this.file);
-  //   },
-  //   updateProfile() {
-  //     const fd = new FormData();
-  //     fd.append("bio", this.bio);
-  //     fd.append("inputFile", this.file);
-  //     axios
-  //         .put(
-  //             "http://localhost:3000/api/users/profile/" + this.$route.params.id,
-  //             fd,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${$store.state.token}`,
-  //               },
-  //             }
-  //         )
-  //         .then(() => {
-  //           this.$store.dispatch("setSnackbar", {
-  //             text: "Votre profil a été modifié.",
-  //           });
-  //           this.$router.go();
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //         });
-  //   },
-  //   deleteProfile() {
-  //     this.dialog = false;
-  //     axios
-  //         .delete(
-  //             "http://localhost:3000/api/users/profile/" + this.$route.params.id,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${$store.state.token}`,
-  //               },
-  //             }
-  //         )
-  //         .then(() => {
-  //           window.localStorage.vuex = JSON.stringify({});
-  //           this.$store.dispatch("setSnackbar", {
-  //             text: "Votre profil a été supprimé. A bientôt !",
-  //           });
-  //           this.$store.dispatch("logout"), this.$router.push("/");
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //         });
-  //   },
-  // },
   computed: {
     ...mapState([
       'user',
     ]),
     avatar() {
       const defaultImage = "https://www.w3schools.com/howto/img_avatar.png";
-      if(this.$store.state.user.avatar === null) return defaultImage;
+      if (this.$store.state.user.avatar === null) return defaultImage;
       return this.$store.state.user.avatar;
-    }
+    },
+    emailRules() {
+      return this.$store.state.emailRules;
+    },
+    usernameRules() {
+      return this.$store.state.usernameRules;
+    },
   },
 };
 

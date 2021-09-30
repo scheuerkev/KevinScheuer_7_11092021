@@ -4,14 +4,13 @@
 
       <div class="postContainer" v-for="post in posts" :key="post.id">
         <v-card
-
-            flat
-            hover
-            class="blue-grey lighten-5 mx-auto"
+            tile
+            class="mx-auto"
             max-width="800"
-            elevation="5"
+            elevation="3"
             height="100%"
         >
+          <button v-if="user.userId === post.UserId" class="postControls"><i class="fas fa-times-circle"></i></button>
           <v-card-title class="justify-center">{{ post.title }}</v-card-title>
           <v-card-subtitle>par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
             <v-avatar size="70">
@@ -19,11 +18,10 @@
             </v-avatar>
           </v-card-subtitle>
           <v-row>
-          <v-col md8 sm12>
-          <v-card-text class="postText ">{{ post.content }}</v-card-text>
-          </v-col>
-           <v-col>
-            <v-img class="postImage xs12" src="https://via.placeholder.com/250" />
+          <v-col>
+          <v-card-text class="postText">{{ post.content }}</v-card-text>
+
+            <v-img v-if="post.image !== null" class="postImage" :src="post.image" />
            </v-col>
           </v-row>
           <v-divider />
@@ -46,7 +44,6 @@
 
 <script>
 import {mapState} from "vuex";
-import moment from "moment";
 
 export default {
   name: "Posts.vue",
@@ -56,16 +53,8 @@ export default {
     }
   },
   computed:
-    mapState(['posts']),
+    mapState(['posts', 'user']),
 
-  getTime(val) {
-    const dateNow = moment.now();
-    const value = moment(val);
-    return dateNow.diff(value, 'days');
-  },
-  methods: {
-
-  },
   mounted() {
     this.$store.dispatch('getAllPosts');
   }
@@ -75,8 +64,17 @@ export default {
 
 <style lang="css">
 .postContainer {
-
+  position: relative;
   margin : 20px auto;
+}
+.postControls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.postControls:hover::before {
+  content: "Supprimer ce post";
 }
 
 .postContent {

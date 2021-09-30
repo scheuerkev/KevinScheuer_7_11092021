@@ -22,6 +22,7 @@
             ref="form"
         >
           <v-text-field
+              @keyup.enter="login()"
               outlined
               v-model="user.email"
               label="Email"
@@ -29,6 +30,7 @@
               prepend-icon="far fa-paper-plane"
           />
           <v-text-field
+              @keyup.enter="login()"
               outlined
               v-model="user.password"
               :type="showPassword ? 'text' : 'password'" label="Mot de passe"
@@ -40,7 +42,7 @@
             <v-layout row>
               <v-flex justify-center>
                 <v-btn
-                    dark @click="login()"
+                    dark @keyup.enter="login()" @click="login()"
                 >
                   Se connecter
                 </v-btn>

@@ -19,6 +19,15 @@
     <v-spacer></v-spacer>
     <v-tooltip v-if="user">
       <template v-slot:activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on" aria-label="Ajouter un post" @click="addPost()">
+          <v-icon>fas fa-plus-circle</v-icon>
+        </v-btn>
+      </template>
+      <span>Ajouter un post</span>
+    </v-tooltip>
+    <v-spacer></v-spacer>
+    <v-tooltip v-if="user">
+      <template v-slot:activator="{ on, attrs }">
         <v-btn icon v-bind="attrs" v-on="on" aria-label="Voir mon profil" @click="showProfile()">
           <v-icon>fas fa-user-circle</v-icon>
         </v-btn>
@@ -52,6 +61,9 @@ export default {
     },
     showProfile() {
       this.$router.push(`/profile/${this.$store.state.user.userId}`);
+    },
+    addPost(){
+      this.$router.push(`/posts/add`);
     }
   },
 }

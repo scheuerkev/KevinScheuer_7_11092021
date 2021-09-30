@@ -5,6 +5,7 @@ import Login from '@/components/auth/Login.vue';
 import Register from "@/components/auth/Register.vue";
 import Profile from "@/components/profile/Profile.vue";
 import Posts from "@/views/Posts.vue";
+import AddPost from "@/views/AddPost.vue";
 import $store from "../store/index.js"
 
 Vue.use(VueRouter)
@@ -36,7 +37,14 @@ const routes = [
         name: 'Posts',
         component: Posts,
         meta: {requiresAuth: true},
-    }
+    },
+    {
+        path: '/posts/add',
+        name: 'AddPost',
+        component: AddPost,
+        meta: {requiresAuth: true},
+    },
+
 ]
 
 const router = new VueRouter({
