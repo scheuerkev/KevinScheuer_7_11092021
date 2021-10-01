@@ -25,15 +25,42 @@
             <v-img v-if="post.image !== null" class="postImage" :src="post.image"/>
           </v-col>
         </v-row>
-        <v-divider/>
         <div v-if="post.Comments.length !== 0" class="commentSection">
-          <h4>Commentaires :</h4>
-          <div v-for="comment in post.Comments" :key="comment.id" class="comment lighten-5">
+          <div class="sendComment">
+          <v-avatar><v-img :src="user.avatar"/></v-avatar>
+          <v-text-field
+              class="sendCommentInput"
+              v-model="content"
+              placeholder="Envoyez votre commentaire"
+              type="email"
+          />
+            <v-btn class="sendCommentBtn" :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le commentaire</v-btn>
+
+          </div>
+          <hr>
+          <div v-for="comment in post.Comments" :key="comment.id" class="comment">
             {{ comment.content }} <span class="author">par {{ comment.User.username }}</span> à {{ comment.createdAt }}
           </div>
         </div>
+        <br>
       </v-card>
 
+      <div class="addComment">
+        Ajouter votre commentaire :
+        <v-form>
+          <v-textarea
+              solo
+              class="commentContent"
+              v-model="content"
+              placeholder="Qu'en avez-vous pensé ?"
+              label="Contenu du commentaire"
+              type="text"
+              prepend-inner-icon="far fa-paper-plane"/>
+
+          <v-btn :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le commentaire</v-btn>
+        </v-form>
+      </div>
+      <!--      </v-card>-->
     </div>
 
 
@@ -47,8 +74,10 @@ import axios from "axios";
 
 export default {
   name: "Posts.vue",
-  state() {
-    return {}
+  data() {
+    return {
+      content: "",
+    }
   },
   methods: {
     deletePost(val) {
@@ -63,12 +92,38 @@ export default {
                 }
               })
           .then(res => {
-                console.log(res)
-                window.location.reload();
-              })
+            console.log(res)
+            this.$store.dispatch('getAllPosts');
+          })
           .catch(err => console.log(err));
 
+    },
+    sendComment(val) {
+      const token = localStorage.getItem('token');
+
+      const payload = {
+        userId: this.$store.state.user.userId,
+        content: this.content,
+      }
+
+      axios
+          .post(`http://localhost:3000/api/post/${val}/comment/`, payload,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                }
+              })
+          .then(res => {
+            console.log(res);
+            this.$store.dispatch('getAllPosts');
+            this.content = "";
+          })
+          .catch(err => console.log(err))
+    },
+    updatePost(val) {
+      this.$router.push(`/post/${val}`);
     }
+
   },
   computed:
       mapState(['posts', 'user']),
@@ -123,6 +178,11 @@ export default {
   margin-right: 5px;
 }
 
+.addComment {
+  max-width: 800px;
+  margin: 10px auto;
+}
+
 .postContent {
   display: flex;
 
@@ -137,16 +197,53 @@ export default {
 }
 
 .comment {
-  width: 60%;
+  width: 95%;
   min-height: 40px;
-  background-color: #bbbbbb;
+  background-color: #EEEE;
   margin: 5px auto;
-  border-radius: 4px;
-  color: #666;
+  color: #ccc;
+}
+
+.comment::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid black;
+}
+
+.sendComment {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .author {
   font-size: 0.7rem;
   color: #777777;
 }
+.sendCommentInput {
+  font-size: 0.8rem;
+  width: 75%;
+}
+
+.sendComment > button {
+  width:20px;
+}
+
+.commentContent {
+
+}
+
+.sendCommentBtn {
+
+}
+
+hr {
+  margin: 10px auto 10px auto;
+  width: 80%;
+  border: 0;
+  z-index: 9999;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.10));
+}
+
 </style>

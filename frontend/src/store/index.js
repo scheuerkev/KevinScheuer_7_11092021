@@ -10,6 +10,7 @@ const state = {
     user: {},
     isLoggedIn: false,
     posts: [],
+    post: [],
     comments: [],
     userInfo: {},
     usernameRules: [
@@ -32,7 +33,7 @@ const mutations = {
     SET_USER: (state, user) => {
         state.user.userId = user.userId;
         state.user.email = user.email;
-        state.user.avatar = user.avatar;
+        state.user.avatar = user.image;
         state.user.username = user.username;
         state.user.isAdmin = user.isAdmin;
         state.user.createdAt = user.createdAt;
@@ -47,7 +48,7 @@ const mutations = {
     UPDATE_USER: (state, user) => {
         state.user = {...state.user, user}
     },
-    LOG_OUT_USER(state) {
+    LOG_OUT_USER: (state) => {
         state.user.token = null;
         state.user.userId = null;
         state.user.username = null;
@@ -56,6 +57,9 @@ const mutations = {
     },
     SET_POSTS: (state, posts) => {
         state.posts = posts;
+    },
+    SET_CURRENT_POST: (state, post) => {
+        state.post = post;
     }
 }
 
@@ -170,6 +174,7 @@ const actions = {
                     }
                 })
             .then((res) => {
+                console.log(res.data);
                 commit('UPDATE_USER', res.data);
                 commit("SET_USER_INFO", {
                     show: "true",
@@ -228,7 +233,23 @@ const actions = {
                 console.log(err.message);
             });
     },
+    getPost({commit}, id) {
+        const token = localStorage.getItem('token');
 
+        axios
+            .get("http://localhost:3000/api/post/"+id, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(res => {
+            const post = {...res.data};
+            console.log(res.data);
+            commit('SET_CURRENT_POST', post);
+        })
+            .catch(err => {
+                console.log(err.message);
+            });
+    },
 }
 
 const getters = {
@@ -237,6 +258,9 @@ const getters = {
     },
     getUser(state) {
         return state.user;
+    },
+    getPost(state){
+        return state.currentPost;
     }
 }
 

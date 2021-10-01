@@ -12,12 +12,12 @@
       <v-row no-gutters>
         <v-col>
           <v-avatar size="100">
-            <v-img v-if="avatar" :src="avatar"></v-img>
+            <v-img :src="user.avatar"></v-img>
           </v-avatar>
           <v-list-item color="rgba(0, 0, 0, .4)">
             <v-list-item-content>
               <v-list-item-title class="title">
-                {{ user.username }}
+                {{ user.username }}<span v-if="user.isAdmin === false" class="user">Utilisateur</span><span v-if="user.isAdmin === true" class="admin">Administrateur</span>
               </v-list-item-title>
               <v-divider inset/>
               <v-list-item-subtitle>
@@ -151,7 +151,7 @@ export default {
       if (this.file) {
         fd.append('email', this.$store.state.user.email);
         fd.append('username', this.$store.state.user.username);
-        fd.append('avatar', this.file);
+        fd.append('image', this.file);
       } else {
         fd.append('email', this.$store.state.user.email);
         fd.append('username', this.$store.state.user.username);
@@ -189,4 +189,29 @@ export default {
 .v-card > *:first-child:not(.v-btn):not(.v-chip):not(.v-avatar) {
   word-break: break-word;
 }
+
+.user{
+  opacity: 0.8;
+  font-size: 0.6rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid #777777;
+  background-color: #42b983;
+  color: #2c3e50;
+  position: relative;
+  bottom: 8px;
+}
+
+.admin{
+  opacity: 0.8;
+  font-size: 0.6rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid #92626A;
+  background-color: #E498A5;
+  color: #4b3236;
+  position: relative;
+  bottom: 8px;
+}
+
 </style>
