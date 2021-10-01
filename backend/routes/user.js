@@ -11,6 +11,7 @@ const userCtrl = require('../controllers/user.js');
 router.post('/signup', passwordValidator, userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.get('/profile/:id', auth, userCtrl.getProfile);
+router.get('/me', auth, userCtrl.getMe);
 router.put('/profile/:id', auth, multerAvatar, userCtrl.updateProfile);
 router.delete('/profile/:id', auth, userCtrl.deleteProfile);
 

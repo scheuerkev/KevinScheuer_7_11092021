@@ -66,7 +66,7 @@ exports.createPost = (req, res) => {
     User.findOne({where: {id: req.body.userId}})
         .then(user => {
             let imageUrl;
-            if (req.file == undefined) imageUrl = null;
+            if (req.file === undefined) imageUrl = null;
             else imageUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
 
             Post.create({
@@ -130,15 +130,16 @@ exports.updatePost = (req, res) => {
 
 exports.deletePost = (req, res) => {
     const id = req.params.id;
+    const userId = req.params.user;
     Post.findOne({where: {id: id}})
         .then(post => {
             if (post) {
                 User.findOne({
                     attributes: ["isAdmin"],
-                    where: {id: req.body.userId}
+                    where: {id: userId}
                 })
                     .then((userGranted) => {
-                        if (req.body.userId == post.userId || userGranted.isAdmin == true) {
+                        if (userId == post.userId || userGranted.isAdmin == true) {
                             Post.findByPk(id)
                                 .then((postById) => {
                                     if (postById.image) {

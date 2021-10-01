@@ -25,7 +25,7 @@ exports.signup = (req, res) => {
                         username: req.body.username,
                         email: req.body.email,
                         password: hash,
-                        avatar: req.body.avatar,
+                        avatar: req.body.image,
                         isAdmin: req.body.isAdmin,
                         createdAt: db.DATE,
                         updatedAt: db.DATE
@@ -73,6 +73,7 @@ exports.getProfile = (req, res) => {
 }
 
 exports.updateProfile = (req, res) => {
+    console.log(req.file);
     const userObject = req.file ?
         {
             ...req.body,
@@ -85,15 +86,31 @@ exports.updateProfile = (req, res) => {
 
 exports.deleteProfile = (req, res) => {
     User.findOne({ where: { id: req.params.id }})
-        .then(profile => {
-            //if(!profile.id) return res.status(404).json({message: 'Impossible to delete this user'});
-            const filename = profile.avatar.split('/images/avatars/')[1];
-            fs.unlink(`images/avatars/${filename}`, () => {
+        .then(() => {
+            //const filename = profile.avatar.split('/images/avatars/')[1];
+            //fs.unlink(`images/avatars/${filename}`, () => {
                 User.destroy({ where: { id: req.params.id }})
                     .then(() => res.status(200).json({ message: 'User successfully deleted' }))
-                    .catch(err => res.status(400).json({err}));
-            });
+                    .catch(err => res.status(400).json({err}))
         })
         .catch(err => res.status(500).json({err}));
 }
 
+exports.getMe = (req, res) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
+    const userId = decodedToken.userId;
+
+    User.findOne({ where: { id: userId}})
+        .then(profile => res.status(201).json({
+            userId: userId,
+            username: profile.username,
+            email: profile.email,
+            avatar: profile.avatar,
+            isAdmin: profile.isAdmin,
+            createdAt: profile.createdAt,
+            updatedAt: profile.updatedAt,
+        }))
+        .catch(err => res.status(400).json({err}))
+
+}
