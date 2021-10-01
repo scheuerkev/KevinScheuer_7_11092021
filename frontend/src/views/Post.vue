@@ -10,7 +10,7 @@
       >
 
         <v-card-title class="justify-center">{{ post.title }}</v-card-title>
-        <v-card-subtitle>par {{post.User.username}} le {{ post.createdAt | formatDateHour }}
+        <v-card-subtitle>par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
           <v-avatar size="70">
             <v-img :src="post.User.avatar"/>
           </v-avatar>
@@ -22,34 +22,43 @@
           </v-col>
         </v-row>
       </v-card>
-
+      <br>
       <div class="addComment">
         Éditer le post
-        <v-form>
-          <v-text-field
-            solo
-            v-model="user.username"
-            :rules="usernameRules"
-            label="Nom d'utilisateur"
-            type="text"
-            prepend-icon="fas fa-user-edit" />
-          <v-textarea
-              solo
-              v-model="content"
-              placeholder="Qu'en avez-vous pensé ?"
-              label="Contenu du commentaire"
-              type="text"
-              prepend-icon="far fa-paper-plane"/>
-          <input
-              type="file"
-              ref="file"
-              name="file"
-              id="file"
-              @change="fileHandler">Mettre à jour l'image>
+        <v-row>
+          <v-col>
+            <v-form>
+              <v-text-field
+                  solo
+                  v-model="title"
+                  placeholder="Titre du post"
+                  label="Modifiez le titre"
+                  type="text"
+                  prepend-icon="fas fa-user-edit"/>
+              <v-textarea
+                  solo
+                  v-model="content"
+                  placeholder="Qu'en avez-vous pensé ?"
+                  label="Contenu du commentaire"
+                  type="text"
+                  prepend-icon="far fa-paper-plane"/>
+              <label for="file">Mettre à jour l'image : </label>
+              <input
+                  type="file"
+                  ref="file"
+                  name="file"
+                  id="file"
+                  @change="fileHandler">
+              <br>
+            </v-form>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn @click="updatePost()">Mettre à jour le post</v-btn>
+          </v-col>
+        </v-row>
 
-
-          <v-btn @click="updatePost()">Mettre à jour le post</v-btn>
-        </v-form>
       </div>
 
     </div>
@@ -63,15 +72,20 @@ export default {
   name: "Post.vue",
   data() {
     return {
-      title:"",
-      content:"",
-      file:"",
+      title: "",
+      content: "",
+      file: "",
     }
   },
   computed:
       mapState(['post', 'user']),
+  methods: {
+    fileHandler() {
+      this.file = this.$refs.file.files[0];
+    }
+  },
   mounted() {
-        this.$store.dispatch('getPost', this.$route.params.id);
+    this.$store.dispatch('getPost', this.$route.params.id);
   },
 }
 

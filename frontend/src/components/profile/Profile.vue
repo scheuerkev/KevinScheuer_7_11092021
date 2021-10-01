@@ -12,12 +12,14 @@
       <v-row no-gutters>
         <v-col>
           <v-avatar size="100">
-            <v-img :src="user.avatar"></v-img>
+            <v-img :src="user.image"/>
           </v-avatar>
           <v-list-item color="rgba(0, 0, 0, .4)">
             <v-list-item-content>
               <v-list-item-title class="title">
-                {{ user.username }}<span v-if="user.isAdmin === false" class="user">Utilisateur</span><span v-if="user.isAdmin === true" class="admin">Administrateur</span>
+                {{ user.username }}
+                <span v-if="user.isAdmin === false" class="user">Utilisateur</span>
+                <span v-if="user.isAdmin === true" class="admin">Administrateur</span>
               </v-list-item-title>
               <v-divider inset/>
               <v-list-item-subtitle>
@@ -60,8 +62,7 @@
                   prepend-icon="far fa-paper-plane"
               />
             </v-col>
-
-            <br/>
+            <br>
           </v-row>
           <v-row>
             <v-col>
@@ -78,20 +79,21 @@
           </v-row>
           <v-row>
             <v-col>
+              <label for="file">Mettre à jour votre photo de profil :</label>
               <input
                   type="file"
                   ref="file"
                   name="file"
                   id="file"
-                  @change="fileHandler" />
+                  @change="fileHandler"/>
             </v-col>
-            <br/>
           </v-row>
+          <br>
           <v-btn align-self="auto" color="primary" @click="updateProfile()">Mettre à jour</v-btn>
         </v-form>
         <br>
       </v-card-text>
-      <UserInfo />
+      <UserInfo/>
       <br>
     </v-card>
     <br>
@@ -109,8 +111,8 @@
         tous les contenus que vous avez créé sur l'application.
         <br>
       </v-card-text>
-      <v-row>
-        <v-col>
+      <v-row wrap justify="center">
+        <v-col cols="12" xs="12" md="8">
           <v-switch class="justify-center"
                     v-model="valid"
                     label="J'ai compris et je veux supprimer mon compte"
@@ -181,6 +183,11 @@ export default {
       return this.$store.state.usernameRules;
     },
   },
+  beforeMount() {
+    this.$store.commit('SET_USER_INFO', {
+      show: false,
+    })
+  }
 };
 
 </script>
@@ -190,7 +197,7 @@ export default {
   word-break: break-word;
 }
 
-.user{
+.user {
   opacity: 0.8;
   font-size: 0.6rem;
   padding: 1px 4px;
@@ -202,7 +209,7 @@ export default {
   bottom: 8px;
 }
 
-.admin{
+.admin {
   opacity: 0.8;
   font-size: 0.6rem;
   padding: 1px 4px;

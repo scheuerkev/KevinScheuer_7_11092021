@@ -75,9 +75,9 @@ router.beforeEach(async (to, from, next) => {
             }
             else {
                 $store.commit('SET_USER_INFO', {
-                    show: "true",
+                    show: true,
                     color: "orange",
-                    message: "vous avez été déconnecté"
+                    message: "Vous avez été déconnecté 👋"
                 })
                 return next('/login');
             }

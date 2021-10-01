@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>
-        Ajouter un post
+      <v-card-title class="justify-center">
+        Ajouter un post 🗞
       </v-card-title>
       <v-card-subtitle>
         Racontez votre histoire et partagez-là avec l'ensemble des collaborateurs
@@ -28,13 +28,18 @@
             prepend-icon="far fa-paper-plane"
         >
         </v-textarea>
-        <input
-            type="file"
-            ref="file"
-            name="file"
-            id="file"
-            @change="fileHandler" />
-
+        <v-row>
+          <v-col>
+            <label for="file">Ajouter une image à votre post :</label>
+            <input
+                type="file"
+                ref="file"
+                name="file"
+                id="file"
+                @change="fileHandler"/>
+          </v-col>
+        </v-row>
+        <br>
         <v-btn :disabled="!(title.length !== 0 && content.length !== 0)" @click="sendPost()">Créer un post</v-btn>
       </v-form>
       <br>
@@ -74,13 +79,18 @@ export default {
         fd.append('content', this.content);
         fd.append('userId', user.userId);
       }
-        this.$store.dispatch('createPost', fd)
+      this.$store.dispatch('createPost', fd)
 
     },
     fileHandler() {
       this.file = this.$refs.file.files[0];
     },
   },
+  beforeMount() {
+    this.$store.commit('SET_USER_INFO', {
+      show: false,
+    })
+  }
 }
 </script>
 

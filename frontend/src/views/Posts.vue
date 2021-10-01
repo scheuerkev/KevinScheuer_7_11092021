@@ -8,15 +8,17 @@
           elevation="3"
           height="100%"
       >
-        <button v-if="user.userId === post.UserId" class="postUpdate" @click="updatePost(post.id)">
+        <button v-if="user.userId === post.UserId || user.isAdmin" class="postUpdate"
+                @click="updatePost(post.id)">
           <i class="fas fa-edit"></i></button>
-        <button v-if="user.userId === post.UserId" class="postDelete" @click="deletePost(post.id)">
+        <button v-if="user.userId === post.UserId || user.isAdmin" class="postDelete"
+                @click="deletePost(post.id)">
           <i class="fas fa-times-circle"></i></button>
         <v-card-title class="justify-center">{{ post.title }}</v-card-title>
+        <v-avatar size="60">
+          <v-img :src="post.User.avatar"/>
+        </v-avatar>
         <v-card-subtitle>par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
-          <v-avatar size="70">
-            <v-img :src="post.User.avatar"/>
-          </v-avatar>
         </v-card-subtitle>
         <v-row>
           <v-col>
@@ -25,47 +27,38 @@
             <v-img v-if="post.image !== null" class="postImage" :src="post.image"/>
           </v-col>
         </v-row>
-        <div v-if="post.Comments.length !== 0" class="commentSection">
-          <div class="sendComment">
-          <v-avatar><v-img :src="user.avatar"/></v-avatar>
-          <v-text-field
-              class="sendCommentInput"
-              v-model="content"
-              placeholder="Envoyez votre commentaire"
-              type="email"
-          />
-            <v-btn class="sendCommentBtn" :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le commentaire</v-btn>
-
-          </div>
-          <hr>
-          <div v-for="comment in post.Comments" :key="comment.id" class="comment">
-            {{ comment.content }} <span class="author">par {{ comment.User.username }}</span> à {{ comment.createdAt }}
-          </div>
-        </div>
-        <br>
       </v-card>
 
-      <div class="addComment">
-        Ajouter votre commentaire :
-        <v-form>
-          <v-textarea
-              solo
-              class="commentContent"
-              v-model="content"
-              placeholder="Qu'en avez-vous pensé ?"
-              label="Contenu du commentaire"
-              type="text"
-              prepend-inner-icon="far fa-paper-plane"/>
 
-          <v-btn :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le commentaire</v-btn>
-        </v-form>
+      <div class="sendComment">
+        <v-avatar size="30">
+          <v-img :src="user.image"/>
+        </v-avatar>
+        <v-text-field
+            class="sendCommentInput"
+            v-model="content"
+            placeholder="Envoyez votre commentaire"
+            type="email"
+        />
       </div>
-      <!--      </v-card>-->
+      <v-btn class="sendCommentBtn" :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le
+        commentaire
+      </v-btn>
+      <hr>
+      <div v-if="post.Comments" class="commentSection">
+        <div v-for="comment in post.Comments" :key="comment.id" class="comment">
+          <span class="author">
+          <v-avatar size="30">
+            <v-img :src="user.image"/>
+          </v-avatar>
+          par {{ comment.User.username }}</span>
+          <i v-if="comment.User.id === user.userId || user.isAdmin" class="deleteComment fas fa-times"></i>
+          <span class="content">{{ comment.content }}</span>
+        </div>
+      </div>
     </div>
-
-
+    <br>
   </v-container>
-
 </template>
 
 <script>
@@ -193,15 +186,23 @@ export default {
 }
 
 .postImage {
-  border-radius: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+  object-fit: contain;
+
 }
 
 .comment {
   width: 95%;
-  min-height: 40px;
+  max-width: 600px;
+  min-height: 70px;
+  padding: 5px 5px;
   background-color: #EEEE;
   margin: 5px auto;
+  border-radius: 2px;
+  border: 1px solid #ccc;
   color: #ccc;
+  position: relative;
 }
 
 .comment::after {
@@ -219,18 +220,31 @@ export default {
 .author {
   font-size: 0.7rem;
   color: #777777;
+  position: absolute;
+  left: 5px;
 }
+
 .sendCommentInput {
   font-size: 0.8rem;
   width: 75%;
 }
 
 .sendComment > button {
-  width:20px;
+  width: 20px;
 }
 
-.commentContent {
+.content {
+  display: block;
+  font-size: 0.9rem;
+  color: #333;
+  margin-top: 40px;
+  text-align: left;
+}
 
+.deleteComment {
+  position: absolute;
+  right: 5px;
+  top: 3px;
 }
 
 .sendCommentBtn {
@@ -241,7 +255,6 @@ hr {
   margin: 10px auto 10px auto;
   width: 80%;
   border: 0;
-  z-index: 9999;
   height: 1px;
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.10));
 }

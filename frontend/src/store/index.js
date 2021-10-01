@@ -33,7 +33,7 @@ const mutations = {
     SET_USER: (state, user) => {
         state.user.userId = user.userId;
         state.user.email = user.email;
-        state.user.avatar = user.image;
+        state.user.image = user.avatar;
         state.user.username = user.username;
         state.user.isAdmin = user.isAdmin;
         state.user.createdAt = user.createdAt;
@@ -73,18 +73,18 @@ const actions = {
             .post('http://localhost:3000/api/auth/login', payload)
             .then((response) => {
                 commit("SET_USER_INFO", {
-                    show: "true",
+                    show: true,
                     color: "green",
-                    message: 'Welcome back 👋',
+                    message: 'Content de vous revoir 👋',
                 });
                 localStorage.setItem('token', response.data.token);
                 dispatch('getUser', response.data.token);
                 setTimeout(() => $router.push('/profile/' + user.userId), 1500)
             }).catch(() => {
             commit("SET_USER_INFO", {
-                show: "true",
+                show: true,
                 color: "red",
-                message: "unable to find this user, sorry",
+                message: "Impossible de vous connecter, vérifiez vos informations 👀",
             });
         });
     },
@@ -124,16 +124,16 @@ const actions = {
                 console.log(response);
                 $router.push('/login');
                 commit("SET_USER_INFO", {
-                    show: "true",
+                    show: true,
                     color: "green",
-                    message: "compte bien créé, merci de vous identifier",
+                    message: "Compte bien créé, merci de vous identifier 🥳",
                 });
             }).catch((err) => {
             console.log(err);
             commit("SET_USER_INFO", {
-                show: "true",
+                show: true,
                 color: "red",
-                message: "unable to register this user, sorry",
+                message: "Impossible d'enregistrer l'utilisateur 😞",
             });
         });
     },
@@ -155,7 +155,7 @@ const actions = {
                     commit("SET_USER_INFO", {
                         show: "true",
                         color: "green",
-                        message: "votre compte à bien été supprimé 👋"
+                        message: "Votre compte à bien été supprimé 😞"
                     })
                 } else (alert('Out of bound'));
             })
@@ -177,16 +177,16 @@ const actions = {
                 console.log(res.data);
                 commit('UPDATE_USER', res.data);
                 commit("SET_USER_INFO", {
-                    show: "true",
+                    show: true,
                     color: "green",
                     message: 'Votre profil a correctement été mis à jour 💪',
                 });
             })
             .catch(() => {
                 commit("SET_USER_INFO", {
-                    show: "true",
+                    show: true,
                     color: "red",
-                    message: 'Cette adresse mail est déjà utilisée ⛔️',
+                    message: "Mise à jour impossible ⛔️",
                 });
             });
     },
@@ -202,17 +202,17 @@ const actions = {
             .then((response) => {
                 console.log(response);
                 commit("SET_USER_INFO", {
-                    show: "true",
+                    show: true,
                     color: "green",
-                    message: "post bien créé !",
+                    message: "Post bien créé ! 🗞",
                 });
                 setTimeout(() => $router.push('/posts'), 2000);
             }).catch((err) => {
             console.log(err);
             commit("SET_USER_INFO", {
-                show: "true",
+                show: true,
                 color: "red",
-                message: "il y'a eu un big pb brow",
+                message: "Impossible de créer le post 😕",
             });
         });
 
