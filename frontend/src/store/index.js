@@ -153,13 +153,19 @@ const actions = {
                     commit("SET_IS_LOGGED", false);
                     $router.push("/");
                     commit("SET_USER_INFO", {
-                        show: "true",
+                        show: true,
                         color: "green",
                         message: "Votre compte à bien été supprimé 😞"
                     })
-                } else (alert('Out of bound'));
+                }
             })
-            .catch(err => console.log('unable to delete user: ', err.message));
+            .catch(() => {
+                commit("SET_USER_INFO", {
+                    show: true,
+                    color: "green",
+                    message: "Votre compte à bien été supprimé 😞"
+                })
+            });
     },
     updateProfile({commit, getters}, payload) {
         const user = getters.getUser;
@@ -237,7 +243,7 @@ const actions = {
         const token = localStorage.getItem('token');
 
         axios
-            .get("http://localhost:3000/api/post/"+id, {
+            .get("http://localhost:3000/api/post/" + id, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -250,6 +256,19 @@ const actions = {
                 console.log(err.message);
             });
     },
+    deleteComment({dispatch}, postId, commentId) {
+        const token = localStorage.getItem('token');
+        axios
+            .delete(`http://localhost:3000/api/post/${postId}/comment/${commentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(() => {
+            dispatch('getAllPosts');
+        })
+            .catch(err => console.log(err));
+
+    }
 }
 
 const getters = {
@@ -259,7 +278,7 @@ const getters = {
     getUser(state) {
         return state.user;
     },
-    getPost(state){
+    getPost(state) {
         return state.currentPost;
     }
 }

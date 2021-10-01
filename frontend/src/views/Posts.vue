@@ -13,7 +13,9 @@
           <i class="fas fa-edit"></i></button>
         <button v-if="user.userId === post.UserId || user.isAdmin" class="postDelete"
                 @click="deletePost(post.id)">
-          <i class="fas fa-times-circle"></i></button>
+          <i class="fas fa-times-circle"></i>
+        </button>
+
         <v-card-title class="justify-center">{{ post.title }}</v-card-title>
         <v-avatar size="60">
           <v-img :src="post.User.avatar"/>
@@ -49,13 +51,14 @@
         <div v-for="comment in post.Comments" :key="comment.id" class="comment">
           <span class="author">
           <v-avatar size="30">
-            <v-img :src="user.image"/>
+            <v-img :src="comment.User.avatar"/>
           </v-avatar>
           par {{ comment.User.username }}</span>
-          <i v-if="comment.User.id === user.userId || user.isAdmin" class="deleteComment fas fa-times"></i>
+          <i v-if="comment.User.id === user.userId || user.isAdmin" @click="deleteComment({postid : post.id, commentid: comment.id})" class="deleteComment fas fa-times"></i>
           <span class="content">{{ comment.content }}</span>
         </div>
       </div>
+
     </div>
     <br>
   </v-container>
@@ -115,6 +118,9 @@ export default {
     },
     updatePost(val) {
       this.$router.push(`/post/${val}`);
+    },
+    deleteComment(commentId) {
+      this.$store.dispatch('deleteComment', commentId);
     }
 
   },
@@ -245,6 +251,10 @@ export default {
   position: absolute;
   right: 5px;
   top: 3px;
+}
+
+.deleteComment:hover {
+  cursor: pointer;
 }
 
 .sendCommentBtn {
