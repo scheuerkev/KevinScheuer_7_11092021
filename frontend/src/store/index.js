@@ -65,7 +65,7 @@ const mutations = {
         state.post = post;
     },
     UPDATE_POST: (state, post) => {
-        state.post = {...state.post, post}
+        state.post = post
     }
 }
 
@@ -278,8 +278,8 @@ const actions = {
                     }
                 })
             .then((res) => {
-                console.log(res.data);
-                commit('UPDATE_POST', res.data);
+                console.log(res);
+
 
             })
             .catch(res => console.log(res));
