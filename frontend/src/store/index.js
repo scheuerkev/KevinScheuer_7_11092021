@@ -26,6 +26,9 @@ const state = {
         v => /(?=.*[A-Za-z])/.test(v) || 'Le mot de passe doit contenir au moins une majuscule et une minuscule',
         v => /(?=.*\d{2})/.test(v) || 'Le mot de passe doit contenir au moins deux chiffres',
     ],
+    contentRules: [
+        v => (v && v.length >= 3) || 'Au moins trois caractères requis ',
+    ],
 }
 
 //Store mutations
@@ -256,14 +259,37 @@ const actions = {
                 console.log(err.message);
             });
     },
-    deleteComment({dispatch}, postId, commentId) {
+    createComment({commit, dispatch}, payload) {
+        const datas = {
+            content: payload.content,
+            userId: payload.userId
+        }
+        console.log(commit);
         const token = localStorage.getItem('token');
         axios
-            .delete(`http://localhost:3000/api/post/${postId}/comment/${commentId}`, {
+            .post(`http://localhost:3000/api/comment/${payload.postId}`, datas,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+            .then(res => {
+                console.log(res);
+                dispatch('getAllPosts');
+            })
+            .catch(err => console.log(err))
+    },
+    deleteComment({commit, dispatch}, payload) {
+        console.log(payload);
+        console.log(commit);
+        const token = localStorage.getItem('token');
+        axios
+            .delete(`http://localhost:3000/api/comment/${payload.commentId}/user/${payload.userId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            }).then(() => {
+            }).then(res => {
+            console.log(res);
             dispatch('getAllPosts');
         })
             .catch(err => console.log(err));

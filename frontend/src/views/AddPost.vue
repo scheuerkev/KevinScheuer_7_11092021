@@ -15,7 +15,7 @@
             placeholder="Un super titre..."
             label="Titre du post"
             type="text"
-            prepend-icon="far fa-paper-plane"
+            prepend-icon="fas fa-heading"
             counter="100"
         />
         <v-textarea
@@ -25,7 +25,7 @@
             placeholder="Une super histoire..."
             label="Contenu du post"
             type="text"
-            prepend-icon="far fa-paper-plane"
+            prepend-icon="fas fa-keyboard"
         >
         </v-textarea>
         <v-row>

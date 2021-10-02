@@ -18,7 +18,7 @@
         <v-row>
           <v-col>
             <v-card-text class="postText">{{ post.content }}</v-card-text>
-            <v-img v-if="post.image !== null" class="postImage" :src="post.image"/>
+            <v-img v-if="post.image !== null" class="postImage modify" :src="post.image"/>
           </v-col>
         </v-row>
       </v-card>
@@ -32,16 +32,17 @@
                   solo
                   v-model="title"
                   placeholder="Titre du post"
+                  :rules="contentRules"
                   label="Modifiez le titre"
                   type="text"
-                  prepend-icon="fas fa-user-edit"/>
+                  prepend-icon="fas fa-heading"/>
               <v-textarea
                   solo
                   v-model="content"
                   placeholder="Qu'en avez-vous pensé ?"
                   label="Contenu du commentaire"
                   type="text"
-                  prepend-icon="far fa-paper-plane"/>
+                  prepend-icon="far fa-keyboard"/>
               <label for="file">Mettre à jour l'image : </label>
               <input
                   type="file"
@@ -78,7 +79,12 @@ export default {
     }
   },
   computed:
-      mapState(['post', 'user']),
+      mapState([
+        'post',
+        'user',
+        'contentRules'
+      ]),
+
   methods: {
     fileHandler() {
       this.file = this.$refs.file.files[0];
@@ -92,5 +98,13 @@ export default {
 </script>
 
 <style scoped>
+.v-card > *:first-child:not(.v-btn):not(.v-chip):not(.v-avatar) {
+  word-break: break-word;
+}
+
+.modify {
+  position: relative;
+}
+
 
 </style>

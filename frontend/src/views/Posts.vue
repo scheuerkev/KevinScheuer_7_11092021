@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    <div class="postContainer" v-for="post in posts" :key="post.id">
+    <div
+        class="postContainer"
+        v-for="post in posts"
+        :key="post.id"
+    >
       <v-card
           tile
           class="mx-auto"
@@ -8,30 +12,41 @@
           elevation="3"
           height="100%"
       >
-        <button v-if="user.userId === post.UserId || user.isAdmin" class="postUpdate"
-                @click="updatePost(post.id)">
-          <i class="fas fa-edit"></i></button>
-        <button v-if="user.userId === post.UserId || user.isAdmin" class="postDelete"
-                @click="deletePost(post.id)">
+        <button
+            v-if="user.userId === post.UserId || user.isAdmin"
+            class="postUpdate"
+            @click="updatePost(post.id)"
+        >
+          <i class="fas fa-edit"></i>
+        </button>
+        <button v-if="user.userId === post.UserId || user.isAdmin"
+            class="postDelete"
+            @click="deletePost(post.id)"
+        >
           <i class="fas fa-times-circle"></i>
         </button>
-
-        <v-card-title class="justify-center">{{ post.title }}</v-card-title>
+        <v-card-title class="justify-center">
+          {{ post.title }}
+        </v-card-title>
         <v-avatar size="60">
           <v-img :src="post.User.avatar"/>
         </v-avatar>
-        <v-card-subtitle>par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
+        <v-card-subtitle>
+          par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
         </v-card-subtitle>
         <v-row>
           <v-col>
-            <v-card-text class="postText">{{ post.content }}</v-card-text>
-
-            <v-img v-if="post.image !== null" class="postImage" :src="post.image"/>
+            <v-card-text class="postText">
+              {{ post.content }}
+            </v-card-text>
+            <v-img
+                v-if="post.image !== null"
+                class="postImage"
+                :src="post.image"
+            />
           </v-col>
         </v-row>
       </v-card>
-
-
       <div class="sendComment">
         <v-avatar size="30">
           <v-img :src="user.image"/>
@@ -43,22 +58,40 @@
             type="email"
         />
       </div>
-      <v-btn class="sendCommentBtn" :disabled="!(content.length !== 0)" @click="sendComment(post.id)">Poster le
-        commentaire
+      <v-btn
+          class="sendCommentBtn"
+          :disabled="!(content.length !== 0)"
+          @keyup.enter="sendComment(post.id, content, user.userId)"
+          @click="sendComment(post.id, content, user.userId)"
+      >
+        Poster le commentaire
       </v-btn>
       <hr>
-      <div v-if="post.Comments" class="commentSection">
-        <div v-for="comment in post.Comments" :key="comment.id" class="comment">
+      <div
+          v-if="post.Comments"
+          class="commentSection"
+      >
+        <div
+            v-for="comment in post.Comments"
+            :key="comment.id"
+            class="comment"
+        >
           <span class="author">
-          <v-avatar size="30">
-            <v-img :src="comment.User.avatar"/>
-          </v-avatar>
-          par {{ comment.User.username }}</span>
-          <i v-if="comment.User.id === user.userId || user.isAdmin" @click="deleteComment({postid : post.id, commentid: comment.id})" class="deleteComment fas fa-times"></i>
-          <span class="content">{{ comment.content }}</span>
+            <v-avatar size="30">
+              <v-img :src="comment.User.avatar"/>
+            </v-avatar>
+          par {{ comment.User.username }}
+          </span>
+          <i
+              v-if="comment.User.id === user.userId || user.isAdmin"
+              @click="deleteComment(comment.id, user.userId)"
+              class="deleteComment fas fa-times"
+          ></i>
+          <span class="content">
+            {{ comment.content }}
+          </span>
         </div>
       </div>
-
     </div>
     <br>
   </v-container>
@@ -94,33 +127,15 @@ export default {
           .catch(err => console.log(err));
 
     },
-    sendComment(val) {
-      const token = localStorage.getItem('token');
-
-      const payload = {
-        userId: this.$store.state.user.userId,
-        content: this.content,
-      }
-
-      axios
-          .post(`http://localhost:3000/api/post/${val}/comment/`, payload,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                }
-              })
-          .then(res => {
-            console.log(res);
-            this.$store.dispatch('getAllPosts');
-            this.content = "";
-          })
-          .catch(err => console.log(err))
+    sendComment(postId, content, userId) {
+      this.$store.dispatch('createComment', {postId, content, userId});
+      this.content = "";
     },
     updatePost(val) {
       this.$router.push(`/post/${val}`);
     },
-    deleteComment(commentId) {
-      this.$store.dispatch('deleteComment', commentId);
+    deleteComment(commentId, userId) {
+      this.$store.dispatch('deleteComment', {commentId, userId});
     }
 
   },
@@ -135,6 +150,10 @@ export default {
 </script>
 
 <style lang="css">
+.v-card > *:first-child:not(.v-btn):not(.v-chip):not(.v-avatar) {
+  word-break: break-word;
+}
+
 .postContainer {
   position: relative;
   margin: 20px auto;

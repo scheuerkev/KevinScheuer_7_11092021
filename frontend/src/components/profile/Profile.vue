@@ -89,7 +89,7 @@
             </v-col>
           </v-row>
           <br>
-          <v-btn align-self="auto" color="primary" @click="updateProfile()">Mettre à jour</v-btn>
+          <v-btn align-self="auto" color="primary" @click="updateThisProfile()">Mettre à jour</v-btn>
         </v-form>
         <br>
       </v-card-text>
@@ -121,7 +121,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn color="error" :disabled="!valid" @click="deleteAccount()">Supprimer mon compte</v-btn>
+          <v-btn color="error" :disabled="!valid" @click="deleteThisAccount()">Supprimer mon compte</v-btn>
         </v-col>
       </v-row>
       <br>
@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import {mapState, mapActions} from 'vuex';
 import UserInfo from "@/components/layout/UserInfo";
 
 export default {
@@ -147,7 +147,11 @@ export default {
     };
   },
   methods: {
-    updateProfile() {
+    ...mapActions([
+        'updateProfile',
+        'deleteAccount']),
+
+    updateThisProfile() {
       const fd = new FormData();
 
       if (this.file) {
@@ -158,10 +162,11 @@ export default {
         fd.append('email', this.$store.state.user.email);
         fd.append('username', this.$store.state.user.username);
       }
-      this.$store.dispatch('updateProfile', fd);
+      this.updateProfile(fd);
+      this.$store.getters.getUser();
     },
-    deleteAccount() {
-      this.$store.dispatch('deleteAccount');
+    deleteThisAccount() {
+      this.deleteAccount();
     },
     fileHandler() {
       this.file = this.$refs.file.files[0];
@@ -170,17 +175,13 @@ export default {
   computed: {
     ...mapState([
       'user',
+      'emailRules',
+      'usernameRules',
     ]),
     avatar() {
       const defaultImage = "https://www.w3schools.com/howto/img_avatar.png";
       if (this.$store.state.user.avatar === null) return defaultImage;
       return this.$store.state.user.avatar;
-    },
-    emailRules() {
-      return this.$store.state.emailRules;
-    },
-    usernameRules() {
-      return this.$store.state.usernameRules;
     },
   },
   beforeMount() {
