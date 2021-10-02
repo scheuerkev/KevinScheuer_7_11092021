@@ -30,7 +30,7 @@
             <v-form>
               <v-text-field
                   solo
-                  v-model="title"
+                  v-model="post.title"
                   placeholder="Titre du post"
                   :rules="contentRules"
                   label="Modifiez le titre"
@@ -38,7 +38,7 @@
                   prepend-icon="fas fa-heading"/>
               <v-textarea
                   solo
-                  v-model="content"
+                  v-model="post.content"
                   placeholder="Qu'en avez-vous pensé ?"
                   label="Contenu du commentaire"
                   type="text"
@@ -56,7 +56,7 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn @click="updatePost()">Mettre à jour le post</v-btn>
+            <v-btn @click="updateThisPost()">Mettre à jour le post</v-btn>
           </v-col>
         </v-row>
 
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapState, mapActions} from "vuex";
 
 export default {
   name: "Post.vue",
@@ -84,8 +84,26 @@ export default {
         'user',
         'contentRules'
       ]),
-
   methods: {
+    ...mapActions([
+      'updatePost']),
+
+    updateThisPost() {
+      const fd = new FormData();
+
+      if (this.file) {
+        fd.append('title', this.title);
+        fd.append('content', this.content);
+        fd.append('image', this.file);
+        fd.append('userId', this.user.userId);
+      } else {
+        fd.append('title', this.title);
+        fd.append('content', this.content);
+        fd.append('userId', this.user.userId);
+      }
+      this.updatePost(fd);
+      //console.log(fd);
+    },
     fileHandler() {
       this.file = this.$refs.file.files[0];
     }

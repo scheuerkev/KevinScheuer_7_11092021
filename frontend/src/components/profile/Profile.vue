@@ -89,7 +89,12 @@
             </v-col>
           </v-row>
           <br>
-          <v-btn align-self="auto" color="primary" @click="updateThisProfile()">Mettre à jour</v-btn>
+          <v-btn
+              align-self="auto"
+              color="primary"
+              @click="updateThisProfile()"
+          >Mettre à jour
+          </v-btn>
         </v-form>
         <br>
       </v-card-text>
@@ -111,8 +116,15 @@
         tous les contenus que vous avez créé sur l'application.
         <br>
       </v-card-text>
-      <v-row wrap justify="center">
-        <v-col cols="12" xs="12" md="8">
+      <v-row
+          wrap
+          justify="center"
+      >
+        <v-col
+            cols="12"
+            xs="12"
+            md="8"
+        >
           <v-switch class="justify-center"
                     v-model="valid"
                     label="J'ai compris et je veux supprimer mon compte"
@@ -121,7 +133,12 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn color="error" :disabled="!valid" @click="deleteThisAccount()">Supprimer mon compte</v-btn>
+          <v-btn
+              color="error"
+              :disabled="!valid"
+              @click="deleteThisAccount()"
+          >Supprimer mon compte
+          </v-btn>
         </v-col>
       </v-row>
       <br>
@@ -163,7 +180,7 @@ export default {
         fd.append('username', this.$store.state.user.username);
       }
       this.updateProfile(fd);
-      this.$store.getters.getUser();
+      //re-call API to enforce refresh /!\
     },
     deleteThisAccount() {
       this.deleteAccount();

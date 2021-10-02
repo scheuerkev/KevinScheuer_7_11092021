@@ -63,6 +63,9 @@ const mutations = {
     },
     SET_CURRENT_POST: (state, post) => {
         state.post = post;
+    },
+    UPDATE_POST: (state, post) => {
+        state.post = {...state.post, post}
     }
 }
 
@@ -118,7 +121,7 @@ const actions = {
     registerUser: ({commit}, payload) => {
         payload = {
             ...payload,
-            avatar: null,
+            image: "http://localhost:3000/images/avatars/default-avatar.png",
             isAdmin: 0
         }
         axios
@@ -259,6 +262,44 @@ const actions = {
                 console.log(err.message);
             });
     },
+    updatePost({commit, getters}, payload){
+        const token = localStorage.getItem('token');
+        const post = getters.getPost;
+
+        console.log(payload);
+        console.log(post.id);
+        console.log(commit);
+
+        axios
+            .put(`http://localhost:3000/api/post/${post.id}` , payload,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+            .then((res) => {
+                console.log(res.data);
+                commit('UPDATE_POST', res.data);
+
+            })
+            .catch(res => console.log(res));
+    },
+    deletePost({commit, dispatch}, payload){
+        const token = localStorage.getItem('token');
+        console.log(commit);
+        axios
+            .delete(`http://localhost:3000/api/post/${payload.postId}/${payload.userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+            .then(res => {
+                console.log(res);
+                dispatch('getAllPosts');
+            })
+            .catch(err => console.log(err));
+    },
     createComment({commit, dispatch}, payload) {
         const datas = {
             content: payload.content,
@@ -305,7 +346,7 @@ const getters = {
         return state.user;
     },
     getPost(state) {
-        return state.currentPost;
+        return state.post;
     }
 }
 

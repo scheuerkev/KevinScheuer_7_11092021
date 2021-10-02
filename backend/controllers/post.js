@@ -10,16 +10,16 @@ exports.getPosts = (req, res) => {
         include: [
             {
                 model: User,
-                attributes: ["username", "avatar", "createdAt"]
+                attributes: ["id", "username", "avatar", "createdAt"]
             },
             {
                 model: Comment,
                 required: false,
-                attributes: ["content", "id"],
+                attributes: ["content", "id", "createdAt"],
                 include: [
                     {
                         model: User,
-                        attributes: ["username", "avatar", "createdAt"]
+                        attributes: ["id", "username", "avatar", "createdAt"]
                     },
                 ],
             },
@@ -39,16 +39,16 @@ exports.getPost = (req, res) => {
         include: [
             {
                 model: User,
-                attributes: ["username", "avatar", "createdAt"]
+                attributes: ["id", "username", "avatar", "createdAt"]
             },
             {
                 model: Comment,
                 required: false,
-                attributes: ["content", "id"],
+                attributes: ["content", "id", "createdAt"],
                 include: [
                     {
                         model: User,
-                        attributes: ["username", "avatar", "createdAt"]
+                        attributes: ["id", "username", "avatar", "createdAt"]
                     },
                 ],
             },

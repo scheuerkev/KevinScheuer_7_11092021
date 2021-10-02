@@ -38,19 +38,18 @@
 ### Back-end
 
 * Depuis ce dossier ```backend/``` lancez ```npm install```pour installer les dépendances du projet.
-* Créez un fichier ```.env``` à la racine du dossier ```backend/``` et ajoutez-y les informations suivantes (sans chevrons) : 
-<br>
+* Créez un fichier ```.env``` à la racine du dossier ```backend/``` et ajoutez-y les informations suivantes (sans ""chevrons"")
 
 > DB_NAME=groupomania <br>
 > DB_USER="votre nom d'administrateur mysql" <br>
 > DB_PWD="votre mot de passe d'administrateur mysql" <br>
-> TOKEN_KEY="Votre clé token secrète"
+> TOKEN_KEY="votre clé token secrète"
 * Lancez le serveur backend ```npm run start```. Par défaut, le serveur se lance sur le port 3000.
 
 ### Base de données
 
 * Importez le script fourni à la racine du repository pour installer la base de données et les tables dans MySQL. 
-Vous pouvez réaliser cet import grâce à phpMyAdmin ou en ligne de commande grâce à la commande <br> ```SOURCE : <chemin/vers/le/script/SQL>``` de MySQL.
+Vous pouvez réaliser cet import grâce à phpMyAdmin ou en ligne de commande grâce à la commande <br> ```SOURCE <chemin/vers/le/script/SQL>``` de MySQL.
 * Un compte admin existe en base de donnée afin de pouvoir tester l'application. Il s'agit du compte répondant aux identifiants : email : admin@groupomania.fr / mdp : Admin100!
 
 ### Front-end

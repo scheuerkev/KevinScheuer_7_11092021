@@ -10,7 +10,7 @@ exports.createComment = (req, res) => {
     })
         .then(user => {
             if (!user) return res.status(401).json({message: 'Unknown user'});
-            Post.findOne({where: {id: req.params.id}})
+            Post.findOne({where: {id: req.params.idPost}})
                 .then(post => {
                     if (!post) return res.status(401).json({message: 'Unknown post'});
                     Comment.create({
@@ -29,17 +29,20 @@ exports.createComment = (req, res) => {
 }
 
 exports.deleteComment = (req, res) => {
-    Comment.findOne({where: {id: req.params.id}})
+    const commentId = req.params.idComment;
+    const userId = req.params.idUser;
+
+    Comment.findByPk(commentId)
         .then(comment => {
             if (comment) {
                 User.findOne({
                     attributes: ["isAdmin"],
-                    where: {id: req.body.userId}
+                    where: {id: userId}
                 })
                     .then(user => {
-                        if (req.body.userId == comment.userId || user.isAdmin == true) {
+                        if (userId == comment.userId || user.isAdmin == true) {
                             Comment.destroy({
-                                where: {id: req.params.id}
+                                where: {id: commentId}
                             })
                                 .then(() => res.status(201).json({message: 'Comment successfully deleted'}))
                                 .catch(err => res.status(400).json({err}));

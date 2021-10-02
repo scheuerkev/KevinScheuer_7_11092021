@@ -12,18 +12,18 @@
           elevation="3"
           height="100%"
       >
+        <button v-if="user.userId === post.UserId || user.isAdmin"
+            class="postDelete"
+            @click="deleteThisPost(post.id, user.userId)"
+        >
+          <i class="fas fa-times-circle"></i>
+        </button>
         <button
-            v-if="user.userId === post.UserId || user.isAdmin"
+            v-if="user.userId === post.UserId"
             class="postUpdate"
             @click="updatePost(post.id)"
         >
           <i class="fas fa-edit"></i>
-        </button>
-        <button v-if="user.userId === post.UserId || user.isAdmin"
-            class="postDelete"
-            @click="deletePost(post.id)"
-        >
-          <i class="fas fa-times-circle"></i>
         </button>
         <v-card-title class="justify-center">
           {{ post.title }}
@@ -61,8 +61,8 @@
       <v-btn
           class="sendCommentBtn"
           :disabled="!(content.length !== 0)"
-          @keyup.enter="sendComment(post.id, content, user.userId)"
-          @click="sendComment(post.id, content, user.userId)"
+          @keyup.enter="createThisComment(post.id, content, user.userId)"
+          @click="createThisComment(post.id, content, user.userId)"
       >
         Poster le commentaire
       </v-btn>
@@ -84,7 +84,7 @@
           </span>
           <i
               v-if="comment.User.id === user.userId || user.isAdmin"
-              @click="deleteComment(comment.id, user.userId)"
+              @click="deleteThisComment(comment.id, user.userId)"
               class="deleteComment fas fa-times"
           ></i>
           <span class="content">
@@ -99,7 +99,6 @@
 
 <script>
 import {mapState} from "vuex";
-import axios from "axios";
 
 export default {
   name: "Posts.vue",
@@ -109,32 +108,17 @@ export default {
     }
   },
   methods: {
-    deletePost(val) {
-      const userId = this.$store.state.user.userId;
-      const token = localStorage.getItem('token');
-
-      axios
-          .delete(`http://localhost:3000/api/post/${val}/${userId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                }
-              })
-          .then(res => {
-            console.log(res)
-            this.$store.dispatch('getAllPosts');
-          })
-          .catch(err => console.log(err));
-
+    deleteThisPost(postId, userId) {
+      this.$store.dispatch('deletePost', {postId, userId});
     },
-    sendComment(postId, content, userId) {
+    createThisComment(postId, content, userId) {
       this.$store.dispatch('createComment', {postId, content, userId});
       this.content = "";
     },
     updatePost(val) {
       this.$router.push(`/post/${val}`);
     },
-    deleteComment(commentId, userId) {
+    deleteThisComment(commentId, userId) {
       this.$store.dispatch('deleteComment', {commentId, userId});
     }
 
@@ -150,8 +134,9 @@ export default {
 </script>
 
 <style lang="css">
-.v-card > *:first-child:not(.v-btn):not(.v-chip):not(.v-avatar) {
+.v-card__title {
   word-break: break-word;
+  padding: 16px 30px;
 }
 
 .postContainer {
@@ -163,7 +148,7 @@ export default {
   opacity: 0.8;
   position: absolute;
   right: 10px;
-  top: 35px;
+  top: 10px;
   color: #333;
   transition: opacity 450ms ease-in-out;
 }
@@ -172,7 +157,7 @@ export default {
   opacity: 0.8;
   position: absolute;
   right: 8px;
-  top: 10px;
+  top: 35px;
   color: #333;
 }
 

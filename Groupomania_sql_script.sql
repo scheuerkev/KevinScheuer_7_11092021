@@ -107,6 +107,10 @@ CREATE TABLE IF NOT EXISTS `groupomania`.`Likes` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+INSERT INTO `Users` (`username`, `email`, `password`, `avatar`, `isAdmin`, `createdAt`, `updatedAt`)
+VALUES
+('Administrator', 'admin@groupomania.fr', '$2b$10$mykhe4Gsu90dUOexsp8dxOVoDjHawReWAJF0JXqxgcwyZs.ub0BEO', 'http://localhost:3000/images/avatars/admin_avatar.png', 1, NOW(), NOW());
+
 USE `groupomania` ;
 
 -- -----------------------------------------------------
