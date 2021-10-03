@@ -9,8 +9,8 @@ Vue.use(Vuex)
 const state = {
     user: {},
     isLoggedIn: false,
-    posts: [],
-    post: [],
+    posts: {},
+    post: {},
     comments: [],
     userInfo: {},
     usernameRules: [
@@ -64,8 +64,8 @@ const mutations = {
     SET_CURRENT_POST: (state, post) => {
         state.post = post;
     },
-    UPDATE_POST: (state, post) => {
-        state.post = post
+    UPDATE_POST: (state, posts) => {
+        state.posts = {...state.posts, posts}
     }
 }
 
@@ -179,7 +179,7 @@ const actions = {
 
         console.log(payload);
         axios
-            .put("http://localhost:3000/api/auth/profile/" + user.userId, payload,
+            .put(`http://localhost:3000/api/auth/profile/${user.userId}`, payload,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -245,18 +245,18 @@ const actions = {
                 console.log(err.message);
             });
     },
-    getPost({commit}, id) {
+    getPost({commit, dispatch}, id) {
         const token = localStorage.getItem('token');
 
         axios
-            .get("http://localhost:3000/api/post/" + id, {
+            .get(`http://localhost:3000/api/post/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }).then(res => {
             const post = {...res.data};
-            console.log(res.data);
             commit('SET_CURRENT_POST', post);
+            dispatch('getAllPosts');
         })
             .catch(err => {
                 console.log(err.message);
@@ -266,8 +266,6 @@ const actions = {
         const token = localStorage.getItem('token');
         const post = getters.getPost;
 
-        console.log(payload);
-        console.log(post.id);
         console.log(commit);
 
         axios
@@ -278,8 +276,8 @@ const actions = {
                     }
                 })
             .then((res) => {
-                console.log(res);
-
+                console.log(res.data);
+                //commit('UPDATE_POST', res.config.data);
 
             })
             .catch(res => console.log(res));

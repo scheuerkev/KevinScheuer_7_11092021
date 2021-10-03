@@ -8,7 +8,6 @@
           elevation="3"
           height="100%"
       >
-
         <v-card-title class="justify-center">{{ post.title }}</v-card-title>
         <v-card-subtitle>par {{ post.User.username }} le {{ post.createdAt | formatDateHour }}
           <v-avatar size="70">
@@ -59,9 +58,7 @@
             <v-btn @click="updateThisPost()">Mettre à jour le post</v-btn>
           </v-col>
         </v-row>
-
       </div>
-
     </div>
   </v-container>
 </template>
@@ -95,14 +92,12 @@ export default {
         fd.append('title', this.title);
         fd.append('content', this.content);
         fd.append('image', this.file);
-        fd.append('userId', this.user.userId);
       } else {
         fd.append('title', this.title);
         fd.append('content', this.content);
-        fd.append('userId', this.user.userId);
       }
-      this.updatePost(fd);
-      //console.log(fd);
+      //this.updatePost(fd);
+      console.log(fd);
     },
     fileHandler() {
       this.file = this.$refs.file.files[0];
