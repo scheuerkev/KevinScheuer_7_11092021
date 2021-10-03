@@ -24,6 +24,7 @@
           <v-text-field
               @keyup.enter="login()"
               outlined
+              :rules="emailRules"
               v-model="user.email"
               label="Email"
               type="email"
@@ -35,6 +36,7 @@
           <v-text-field
               @keyup.enter="login()"
               outlined
+              :rules="passwordRules"
               v-model="user.password"
               :type="showPassword ? 'text' : 'password'" label="Mot de passe"
               prepend-icon="fas fa-key" :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
@@ -72,7 +74,7 @@
 
 <script>
 import UserInfo from "@/components/layout/UserInfo";
-import {mapActions} from "vuex";
+import {mapState, mapActions} from "vuex";
 
 export default {
   name: "Login.vue",
@@ -90,6 +92,11 @@ export default {
       }
     }
   },
+  computed:
+      mapState([
+      'emailRules',
+      'passwordRules']),
+
   methods: {
     ...mapActions([
       'loginUser']),

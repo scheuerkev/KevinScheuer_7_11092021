@@ -18,13 +18,6 @@
         >
           <i class="fas fa-times-circle"></i>
         </button>
-        <button
-            v-if="user.userId === post.UserId"
-            class="postUpdate"
-            @click="updatePost(post.id)"
-        >
-          <i class="fas fa-edit"></i>
-        </button>
         <v-card-title class="justify-center">
           {{ post.title }}
         </v-card-title>
@@ -80,7 +73,7 @@
             <v-avatar size="30">
               <v-img :src="comment.User.avatar"/>
             </v-avatar>
-          par {{ comment.User.username }}
+          par {{ comment.User.username }} le {{ comment.createdAt | formatDateHour}}
           </span>
           <i
               v-if="comment.User.id === user.userId || user.isAdmin"
@@ -114,9 +107,6 @@ export default {
     createThisComment(postId, content, userId) {
       this.$store.dispatch('createComment', {postId, content, userId});
       this.content = "";
-    },
-    updatePost(val) {
-      this.$router.push(`/post/${val}`);
     },
     deleteThisComment(commentId, userId) {
       this.$store.dispatch('deleteComment', {commentId, userId});

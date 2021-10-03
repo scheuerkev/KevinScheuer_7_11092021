@@ -263,26 +263,6 @@ const actions = {
                 console.log(err.message);
             });
     },
-    updatePost({commit, getters}, payload){
-        const token = localStorage.getItem('token');
-        const post = getters.getPost;
-
-        console.log(commit);
-
-        axios
-            .put(`http://localhost:3000/api/post/${post.id}` , payload,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
-            .then((res) => {
-                console.log(res.data);
-                //commit('UPDATE_POST', res.config.data);
-
-            })
-            .catch(res => console.log(res));
-    },
     deletePost({commit, dispatch}, payload){
         const token = localStorage.getItem('token');
         console.log(commit);
