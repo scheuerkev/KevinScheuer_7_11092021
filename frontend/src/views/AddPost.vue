@@ -45,7 +45,7 @@
             @click="sendPost()"
         >
           Créer un post
-          /v-btn>
+          </v-btn>
       </v-form>
       <br>
     </v-card>
