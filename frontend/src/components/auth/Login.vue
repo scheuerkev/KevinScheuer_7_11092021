@@ -28,6 +28,7 @@
               label="Email"
               type="email"
               prepend-icon="far fa-paper-plane"
+              aria-label="Entrez votre adresse mail"
           />
           <!--:append-icon and @click:append setting behaviour of revealing password to user.
           Due to ternary block, icon and input type change if clicked or not -->
@@ -37,7 +38,9 @@
               v-model="user.password"
               :type="showPassword ? 'text' : 'password'" label="Mot de passe"
               prepend-icon="fas fa-key" :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-              @click:append="showPassword = !showPassword"/>
+              @click:append="showPassword = !showPassword"
+              aria-label="Entrez votre mot de passe"
+          />
           <v-card-actions>
             <v-layout row>
               <v-flex justify-center>

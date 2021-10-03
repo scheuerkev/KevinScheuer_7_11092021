@@ -43,6 +43,7 @@ export default {
    max-width: 400px;
    margin: auto;
    position: relative;
+   color: rgba(0,0,0,0.9);
  }
 
  .close {

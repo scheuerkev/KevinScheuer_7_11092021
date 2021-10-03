@@ -55,14 +55,14 @@
           <v-btn
               :disabled="!valid"
               color="success"
-              class="mr-4"
+              class="mr-4 black_btn"
               @click="register()"
           >
             s'inscrire
           </v-btn>
           <v-btn
               color="error"
-              class="mr-4"
+              class="mr-4 black_btn"
               @click="reset"
           >
             remettre à zéro
@@ -121,3 +121,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.black_btn {
+  color: rgba(0,0,0,0.9) !important;
+}
+</style>
