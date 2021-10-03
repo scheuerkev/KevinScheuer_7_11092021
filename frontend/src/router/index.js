@@ -11,6 +11,7 @@ import $store from "../store/index.js"
 
 Vue.use(VueRouter)
 
+//routes definition, note that some of these ones needs to be auth
 const routes = [
     {
         path: '/',
@@ -63,6 +64,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+//setting routing guard
 router.beforeEach(async (to, from, next) => {
         if (to.matched.some(routes => routes.meta.requiresAuth)) {
             $store.dispatch('getUser', localStorage.getItem('token'))

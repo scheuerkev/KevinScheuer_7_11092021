@@ -40,7 +40,12 @@
           </v-col>
         </v-row>
         <br>
-        <v-btn :disabled="!(title.length !== 0 && content.length !== 0)" @click="sendPost()">Créer un post</v-btn>
+        <v-btn
+            :disabled="!(title.length !== 0 && content.length !== 0)"
+            @click="sendPost()"
+        >
+          Créer un post
+          /v-btn>
       </v-form>
       <br>
     </v-card>

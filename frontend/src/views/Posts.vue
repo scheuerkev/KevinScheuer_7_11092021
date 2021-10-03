@@ -191,7 +191,6 @@ export default {
 
 .postContent {
   display: flex;
-
 }
 
 .postText {
@@ -202,7 +201,6 @@ export default {
   max-width: 500px;
   margin: 0 auto;
   object-fit: contain;
-
 }
 
 .comment {
@@ -264,10 +262,6 @@ export default {
   cursor: pointer;
 }
 
-.sendCommentBtn {
-
-}
-
 hr {
   margin: 10px auto 10px auto;
   width: 80%;
@@ -275,5 +269,4 @@ hr {
   height: 1px;
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.10));
 }
-
 </style>

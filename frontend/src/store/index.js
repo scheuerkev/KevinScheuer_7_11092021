@@ -13,6 +13,7 @@ const state = {
     post: {},
     comments: [],
     userInfo: {},
+    //rules to provide information handling to user
     usernameRules: [
         v => !!v || 'Un nom d\'utilisateur est obligatoire',
         v => (v && v.length >= 8) || 'Le nom d\'utilisateur doit contenir au moins 8 caractères',
@@ -143,6 +144,7 @@ const actions = {
             });
         });
     },
+    //delete account
     deleteAccount({commit, getters}) {
         const user = getters.getUser;
         const token = localStorage.getItem('token');
@@ -227,7 +229,6 @@ const actions = {
                 message: "Impossible de créer le post 😕",
             });
         });
-
     },
     getAllPosts({commit}) {
         const token = localStorage.getItem('token');
@@ -336,6 +337,7 @@ const actions = {
     }
 }
 
+//store getters
 const getters = {
     getPosts(state) {
         return state.posts;
