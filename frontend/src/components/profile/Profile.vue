@@ -165,10 +165,11 @@ export default {
   },
   methods: {
     ...mapActions([
-        'updateProfile',
-        'deleteAccount']),
+      'updateProfile',
+      'deleteAccount']),
 
     updateThisProfile() {
+      //build a form data to send to server (note that this FD is different if file exists or not)
       const fd = new FormData();
 
       if (this.file) {
@@ -180,7 +181,6 @@ export default {
         fd.append('username', this.$store.state.user.username);
       }
       this.updateProfile(fd);
-      //re-call API to enforce refresh /!\
     },
     deleteThisAccount() {
       this.deleteAccount();
@@ -195,11 +195,6 @@ export default {
       'emailRules',
       'usernameRules',
     ]),
-    avatar() {
-      const defaultImage = "https://www.w3schools.com/howto/img_avatar.png";
-      if (this.$store.state.user.avatar === null) return defaultImage;
-      return this.$store.state.user.avatar;
-    },
   },
   beforeMount() {
     this.$store.commit('SET_USER_INFO', {
@@ -238,5 +233,4 @@ export default {
   position: relative;
   bottom: 8px;
 }
-
 </style>

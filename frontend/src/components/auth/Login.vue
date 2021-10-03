@@ -29,6 +29,8 @@
               type="email"
               prepend-icon="far fa-paper-plane"
           />
+          <!--:append-icon and @click:append setting behaviour of revealing password to user.
+          Due to ternary block, icon and input type change if clicked or not -->
           <v-text-field
               @keyup.enter="login()"
               outlined
@@ -36,13 +38,12 @@
               :type="showPassword ? 'text' : 'password'" label="Mot de passe"
               prepend-icon="fas fa-key" :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
               @click:append="showPassword = !showPassword"/>
-          <!--prepend-icon and @click:append setting behaviour of revealing password to user.
-          Due to ternary block, icon and input type change if clicked or not -->
           <v-card-actions>
             <v-layout row>
               <v-flex justify-center>
                 <v-btn
-                    dark @keyup.enter="login()" @click="login()"
+                    dark @keyup.enter="login()"
+                    @click="login()"
                 >
                   Se connecter
                 </v-btn>
@@ -68,6 +69,7 @@
 
 <script>
 import UserInfo from "@/components/layout/UserInfo";
+import {mapActions} from "vuex";
 
 export default {
   name: "Login.vue",
@@ -86,9 +88,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'loginUser']),
     //when clicked, form button launch this login func which dispatch proper action in the store
     login() {
-      this.$store.dispatch("loginUser", this.user);
+      this.loginUser(this.user);
     }
   },
 }

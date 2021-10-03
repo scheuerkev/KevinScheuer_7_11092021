@@ -45,8 +45,8 @@
     </v-tooltip>
   </v-app-bar>
 </template>
-<script>
 
+<script>
 export default {
   name: "MainNav.vue",
   computed: {
@@ -68,7 +68,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -124,7 +124,10 @@ export default {
 
   },
   computed:
-      mapState(['posts', 'user']),
+      mapState([
+        'posts',
+        'user'
+      ]),
 
   mounted() {
     this.$store.dispatch('getAllPosts');

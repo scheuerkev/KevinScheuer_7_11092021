@@ -39,6 +39,8 @@
               required
               outlined
           ></v-text-field>
+          <!--:append-icon and @click:append setting behaviour of revealing password to user.
+          Due to ternary block, icon and input type change if clicked or not -->
           <v-text-field
               v-model="userInfo.password"
               prepend-icon="fas fa-key"
@@ -84,6 +86,7 @@
 
 <script>
 import UserInfo from "@/components/layout/UserInfo";
+import {mapState, mapActions} from "vuex";
 
 export default {
   components: {
@@ -98,20 +101,19 @@ export default {
       password: null
     },
   }),
-  computed: {
-    emailRules() {
-      return this.$store.state.emailRules;
-    },
-    passwordRules() {
-      return this.$store.state.passwordRules;
-    },
-    usernameRules() {
-      return this.$store.state.usernameRules;
-    },
-  },
+  computed:
+    mapState([
+      'emailRules',
+      'passwordRules',
+      'usernameRules']),
+
   methods: {
+    ...mapActions([
+      'registerUser']),
+
     register() {
-      if (this.$refs.form.validate()) this.$store.dispatch("registerUser", this.userInfo);
+      //registerUser method is dispatch from the store only if form.validate() is true
+      if (this.$refs.form.validate()) this.registerUser(this.userInfo);
     },
     reset() {
       this.$refs.form.reset()

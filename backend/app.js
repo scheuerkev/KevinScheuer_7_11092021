@@ -57,7 +57,6 @@ db.authenticate()
 //CORS Policy
 app.use(cors());
 
-
 //Calls
 app.use('/api/', apiLimiter);
 app.use(express.json());
@@ -66,7 +65,6 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
-
 
 //Export the app
 module.exports = app;

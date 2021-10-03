@@ -7,7 +7,12 @@
       icon="fas fa-user-circle"
       type="success"
       v-show="userInfo.show"
-  >{{ userInfo.message }}<i @click="closeAlert()" class="close fas fa-times"></i></v-alert>
+  >
+    {{ userInfo.message }}
+    <i @click="closeAlert()"
+       class="close fas fa-times"
+    ></i>
+  </v-alert>
 </template>
 
 <script>
