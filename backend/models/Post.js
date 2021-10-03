@@ -1,3 +1,5 @@
+//Post model to feed Posts table
+
 module.exports = (sequelize, Sequelize) => {
 
     const Post = sequelize.define('Post', {

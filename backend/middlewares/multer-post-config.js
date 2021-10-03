@@ -1,3 +1,5 @@
+//This file set multer behaviour for post images
+
 //Multer requirement
 const multerPost = require('multer');
 
@@ -21,4 +23,4 @@ const storage = multerPost.diskStorage({
 });
 
 //Exporting Multer
-module.exports = multerPost({ storage }).single('image');
+module.exports = multerPost({storage}).single('image');

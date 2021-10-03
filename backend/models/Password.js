@@ -1,3 +1,5 @@
+//Password model provide pattern to required password in proper middleware
+
 //Requirement for password schema
 const passwordValidator = require('password-validator');
 

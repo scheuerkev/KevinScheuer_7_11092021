@@ -1,3 +1,5 @@
+//Comment model to feed Comments table
+
 module.exports = (sequelize, Sequelize) => {
     const Comment = sequelize.define('Comment', {
         content: {

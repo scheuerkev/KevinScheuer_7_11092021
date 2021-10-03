@@ -1,3 +1,5 @@
+//User model to feed Users table
+
 module.exports = (sequelize, Sequelize) => {
 
     const User = sequelize.define('User', {

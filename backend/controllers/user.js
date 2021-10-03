@@ -8,6 +8,7 @@ const fs = require('fs');
 //Dotenv requirement to load locals env variables
 require('dotenv').config();
 
+//regexp mask definition
 const emailMask = /^[a-z0-9-_]*[.]{0,1}[a-zA-Z0-9-_]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,15}){1}$/;
 
 
@@ -43,6 +44,7 @@ exports.signup = (req, res) => {
         .catch(err => res.status(400).json({err}));
 };
 
+//login controller : look for one user by his email and then compare bwt crypt passwords
 exports.login = (req, res) => {
     User.findOne({where: {email: req.body.email}})
         .then(user => {
@@ -66,42 +68,46 @@ exports.login = (req, res) => {
         .catch(err => res.status(500).json({err}));
 };
 
+//to get profile info from one user by his id provided by url
 exports.getProfile = (req, res) => {
     User.findOne({where: {id: req.params.id}})
         .then(profile => res.status(200).json(profile))
         .catch(err => res.status(400).json({err}));
 }
 
+//update allow user to put new datas in DB, check if request contains files
 exports.updateProfile = (req, res) => {
-    console.log(req.file);
     const userObject = req.file ?
         {
             ...req.body,
             avatar: `${req.protocol}://${req.get('host')}/images/avatars/${req.file.filename}`
-        } : { ...req.body}
+        } : {...req.body}
     User.update({...userObject, id: req.params.id}, {where: {id: req.params.id}})
         .then(() => res.status(200).json({message: 'User successfully updated'}))
         .catch(err => res.status(400).json({err}));
 }
 
+//to delete one profile by his id. if avatar exists, unlink it to remove it from server
 exports.deleteProfile = (req, res) => {
-    User.findOne({ where: { id: req.params.id }})
-        .then(() => {
-            //const filename = profile.avatar.split('/images/avatars/')[1];
-            //fs.unlink(`images/avatars/${filename}`, () => {
-                User.destroy({ where: { id: req.params.id }})
-                    .then(() => res.status(200).json({ message: 'User successfully deleted' }))
-                    .catch(err => res.status(400).json({err}))
+    User.findOne({where: {id: req.params.id}})
+        .then(profile => {
+            const filename = profile.avatar.split('/images/avatars/')[1];
+            fs.unlink(`images/avatars/${filename}`, () => {
+                User.destroy({where: {id: req.params.id}})
+                    .then(() => res.status(200).json({message: 'User successfully deleted'}))
+                    .catch(err => res.status(400).json({err}));
+            });
         })
         .catch(err => res.status(500).json({err}));
 }
 
+//getMe controller is linked to a get route to provide all user info after providing auth token and decode it
 exports.getMe = (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
     const userId = decodedToken.userId;
 
-    User.findOne({ where: { id: userId}})
+    User.findOne({where: {id: userId}})
         .then(profile => res.status(201).json({
             userId: userId,
             username: profile.username,
@@ -112,5 +118,4 @@ exports.getMe = (req, res) => {
             updatedAt: profile.updatedAt,
         }))
         .catch(err => res.status(400).json({err}))
-
 }

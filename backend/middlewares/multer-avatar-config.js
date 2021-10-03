@@ -1,3 +1,5 @@
+//This file set multer behaviour for user avatar
+
 //Multer requirement
 const multerAvatar = require('multer');
 
@@ -21,4 +23,4 @@ const storage = multerAvatar.diskStorage({
 });
 
 //Exporting Multer
-module.exports = multerAvatar({ storage }).single('image');
+module.exports = multerAvatar({storage}).single('image');

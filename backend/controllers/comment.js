@@ -1,8 +1,10 @@
+//controller requirements
 const db = require('../models');
 const Post = db.posts;
 const User = db.users;
 const Comment = db.comments;
 
+//to create a comment, request have to find the user who wants to post the comment and then the commented post
 exports.createComment = (req, res) => {
     User.findOne({
         attributes: ["id", "username", "email"],
@@ -28,6 +30,7 @@ exports.createComment = (req, res) => {
         .catch(err => res.status(500).json({err}));
 }
 
+//to delete comment controller first localize the comment in DB and check if user is granted to delete it
 exports.deleteComment = (req, res) => {
     const commentId = req.params.idComment;
     const userId = req.params.idUser;
@@ -46,9 +49,8 @@ exports.deleteComment = (req, res) => {
                             })
                                 .then(() => res.status(201).json({message: 'Comment successfully deleted'}))
                                 .catch(err => res.status(400).json({err}));
-                        }
-                        else {
-                            return res.status(403).json({ message: 'You\'re not allow to manage this comment'});
+                        } else {
+                            return res.status(403).json({message: 'You\'re not allow to manage this comment'});
                         }
                     })
                     .catch(err => res.status(404).json({err}));

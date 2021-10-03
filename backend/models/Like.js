@@ -1,3 +1,5 @@
+//Like model to feed Likes table : for arrow feature
+
 module.exports = (sequelize, Sequelize) => {
 
     const Like = sequelize.define('Like', {
